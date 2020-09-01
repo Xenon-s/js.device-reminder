@@ -20,28 +20,12 @@ Dieses Script dient dazu, eine variable Anzahl an Geraeten zu ueberwachen und be
 In der Beta Phase muss man im array "Input" seine Geraete noch von Hand hinzufuegen, dass wird sich spaeter noch aendern. Dazu einfach die folgende Zeile kopieren
 und in das arrGeraeteInput einfuegen.
 
-{geraeteName:"GERAETENAME", energyMessure: 'DATENPUNKT VERBRAUCH', energyPower:'DATENPUNKT SWITCH ON/OFF'},
-
-"GERAETENAME" kann durch einen beliebigen Namen ersetzt werden (keine Umlaute!)
 'DATENPUNKT VERBRAUCH' Hier muss der DP ausgewaehlt werden, welcher den Verbrauch misst
 'DATENPUNKT SWITCH ON/OFF' Hier wird der Switch ausgewaehlt, der das Geraet AN/AUS schaltet -> aktuell noch nicht implementiert
 
 Die Datenpunkte zur Anzeige in VIS werden automatisch standardmaessig unter "0_userdata.0.Verbrauch." angelegt.
 
-*/
-
-// Benutzereingaben, koennen individuell angepasst werden
-// standardpfad fuer zustandsausgabe
-let standardPfad ="0_userdata.0.Verbrauch."; // kann angepasst werden
-let startNachricht = true; // Nachricht bei Geraetestart erhalten?
-let endeNachricht = true; // Nachricht bei Geraetevorgang ende erhalten?
-let telegram = true; // Nachricht per Telegram?
-let arrTelegramUser =["Steffen", "", ""] // hier koennen die Empfaenger eingegeben werden. einfach den namen zwischen "USER1" einegeben und mit "," trennen
-let alexa = false; // Nachricht per Alexa?
-let arrAlexaID = ["ID1", "ID2", "ID3"]; // ID von Alexa eingeben
-
-
-/* array INPUT -> muss zur Zeit noch von Hand angepasst werden
+array INPUT -> muss zur Zeit noch von Hand angepasst werden
 NEU: Es darf nicht mehr der name geandert werden! Es sind derzeit nur folgende Geraete nutzbar (Namen muessen genau uebernommen werden):
 "Trockner"
 "Waschmaschine"
@@ -61,6 +45,16 @@ let arrGeraeteInput = [
   //{geraeteName:"Wasserkocher", energyMessure: '', energyPower:''},
   {geraeteName:"Test", energyMessure: "0_userdata.0.Verbrauch.Test.testWert"},
 ]
+
+// Benutzereingaben, koennen individuell angepasst werden
+// standardpfad fuer zustandsausgabe
+let standardPfad ="0_userdata.0.Verbrauch."; // kann angepasst werden
+let startNachricht = true; // Nachricht bei Geraetestart erhalten?
+let endeNachricht = true; // Nachricht bei Geraetevorgang ende erhalten?
+let telegram = true; // Nachricht per Telegram?
+let arrTelegramUser =["Steffen", "", ""] // hier koennen die Empfaenger eingegeben werden. einfach den namen zwischen "USER1" einegeben und mit "," trennen
+let alexa = false; // Nachricht per Alexa?
+let arrAlexaID = ["ID1", "ID2", "ID3"]; // ID von Alexa eingeben
 
 /*
 *****************************************************

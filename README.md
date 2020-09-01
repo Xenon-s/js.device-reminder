@@ -47,7 +47,6 @@ und in das arrGeraeteInput einfuegen.
 
 {geraeteName:"GERAETENAME", energyMessure: 'DATENPUNKT VERBRAUCH', energyPower:'DATENPUNKT SWITCH ON/OFF'},
 
-"GERAETENAME" kann durch einen beliebigen Namen ersetzt werden (keine Umlaute!)
 'DATENPUNKT VERBRAUCH' Hier muss der DP ausgewaehlt werden, welcher den Verbrauch misst
 'DATENPUNKT SWITCH ON/OFF' Hier wird der Switch ausgewaehlt, der das Geraet AN/AUS schaltet -> aktuell noch nicht implementiert
 
@@ -72,7 +71,8 @@ In the beta phase you have to add your devices manually in the "Input" array, th
 
 {geraeteName: "GERAETENAME", energyMessure: 'DATA POINT CONSUMPTION', energyPower: 'DATENPUNKT SWITCH ON / OFF'},
 
-"DEVICE NAME" can be replaced by any name (no umlauts!) 'DATA POINT CONSUMPTION' Here the DP must be selected which measures the consumption 'DATA POINT SWITCH ON / OFF' Here the switch that switches the device ON / OFF is selected -> not yet implemented
+'DATA POINT CONSUMPTION' Here the DP must be selected which measures the consumption
+'DATA POINT SWITCH ON / OFF' Here the switch that switches the device ON / OFF is selected -> not yet implemented
 
 The data points for display in VIS are automatically set to "0_userdata.0.Verbrauch." created.
 
@@ -87,7 +87,7 @@ Of course, the energyMessure and the eneryPower still have to be adjusted, altho
 # License
 MIT License
 
-Copyright (c) 2020 Steffen Feldkamp 
+Copyright (c) 2020 Steffen Feldkamp
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 

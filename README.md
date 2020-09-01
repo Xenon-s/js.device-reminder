@@ -42,11 +42,6 @@ Alexa notification (multiple IDs are possible)
 # Anleitung / manual
 Ein neues JS Script in iobroker erstellen und das Script aus "script-device-reminder.js" kopieren und einfügen.
 
-In der Beta Phase muss man im array "Input" seine Geraete noch von Hand hinzufuegen, dass wird sich spaeter noch aendern. Dazu einfach die folgende Zeile kopieren
-und in das arrGeraeteInput einfuegen.
-
-{geraeteName:"GERAETENAME", energyMessure: 'DATENPUNKT VERBRAUCH', energyPower:'DATENPUNKT SWITCH ON/OFF'},
-
 'DATENPUNKT VERBRAUCH' Hier muss der DP ausgewaehlt werden, welcher den Verbrauch misst
 'DATENPUNKT SWITCH ON/OFF' Hier wird der Switch ausgewaehlt, der das Geraet AN/AUS schaltet -> aktuell noch nicht implementiert
 
@@ -66,10 +61,6 @@ wobei energyPower aktuell weiterhin nicht implentiert ist, dass kommt noch!
 
 
 Create a new JS script in iobroker and copy and paste the script from "script-device-reminder.js".
-
-In the beta phase you have to add your devices manually in the "Input" array, that will change later. Simply copy the following line and paste it into the arrGeraeteInput.
-
-{geraeteName: "GERAETENAME", energyMessure: 'DATA POINT CONSUMPTION', energyPower: 'DATENPUNKT SWITCH ON / OFF'},
 
 'DATA POINT CONSUMPTION' Here the DP must be selected which measures the consumption
 'DATA POINT SWITCH ON / OFF' Here the switch that switches the device ON / OFF is selected -> not yet implemented

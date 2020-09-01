@@ -17,8 +17,6 @@ Version 0.4.0 Berechnung fuer den Startwert eingefuegt
 ******************************************************************************************************************************************************
 
 Dieses Script dient dazu, eine variable Anzahl an Geraeten zu ueberwachen und bei eintreten eines Ereignisses eine Meldung auszugeben.
-In der Beta Phase muss man im array "Input" seine Geraete noch von Hand hinzufuegen, dass wird sich spaeter noch aendern. Dazu einfach die folgende Zeile kopieren
-und in das arrGeraeteInput einfuegen.
 
 'DATENPUNKT VERBRAUCH' Hier muss der DP ausgewaehlt werden, welcher den Verbrauch misst
 'DATENPUNKT SWITCH ON/OFF' Hier wird der Switch ausgewaehlt, der das Geraet AN/AUS schaltet -> aktuell noch nicht implementiert

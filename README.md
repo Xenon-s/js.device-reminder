@@ -1,7 +1,7 @@
-# js.device-reminder
-Dies ist ein beta-script zur Ermittlung und Auswertung von elektrischen Verbrauchen, die mittels Schalt-Mess-Aktoren überwacht werden.
+# js.device-reminder ioBroker "beta Script"
+Dies ist ein beta-script zur Ermittlung und Auswertung von elektrischen Verbrauchen, die mittels Schalt-Mess-Aktoren in ioBroker überwacht werden.
 
-This is a beta script for determining and evaluating electrical consumption that is monitored by means of switch / measurement actuators.
+This is a beta script for the determination and evaluation of electrical consumption, which is monitored by means of switching / measuring actuators in ioBroker.
 
 # Was sollte beachtet werden? / What should be considered?
 Der refresh Intervall vom "Verbrauchswert(heißt bei den meisten Geräten "energy")" sollte nicht mehr als 10 Sekunden betragen, da es sonst zu sehr stark verzögerten Meldungen kommen kann.

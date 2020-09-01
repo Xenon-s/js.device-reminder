@@ -1,18 +1,22 @@
 // Script zur Verbrauchsueberwachung von elektrischen Geraeten ueber ioBroker
-const version = "version 0.4.0 beta, 20.08.2020, letztes update 01.09.2020";
+const version = "version 0.1 beta, 20.08.2020, letztes update 01.09.2020, 17 Uhr, S Feldkamp auf Stand 0.1";
 const erstellt = "s. feldkamp"
 
 /* Changelog
-Version 0.1 Script erstellt
-Version 0.1.5 erste Tests und buxfixes
-Version 0.2.0 alexa und telegram hinzugefuegt
-Version 0.2.1 bugfixes
-Version 0.3.0 berechnung fuer Geraete eingefuegt und timeout entfernt
-Version 0.3.1 unterschiedliche Telegramnutzer sind nun moeglich
-Version 0.3.2 mehrere Alexa IDs sind nun moeglich
-Version 0.3.3 objekterstellung ueberarbeitet und feste Werte hinzugefuegt
-Version 0.3.4 Berechnung wurde nochmals ueberarbeitet
-Version 0.4.0 Berechnung fuer den Startwert eingefuegt
+Version 0.0.1
+Script erstellt
+
+Version 0.1
+erste Tests und buxfixes
+alexa und telegram hinzugefuegt
+bugfixes
+berechnung fuer Geraete eingefuegt und timeout entfernt
+unterschiedliche Telegramnutzer sind nun moeglich
+mehrere Alexa IDs sind nun moeglich
+objekterstellung ueberarbeitet und feste Werte hinzugefuegt
+Berechnung wurde nochmals ueberarbeitet
+Berechnung fuer den Startwert eingefuegt
+Auswertung und objekterstellung ueberarbeitet
 
 ******************************************************************************************************************************************************
 
@@ -39,27 +43,30 @@ let telegram = true; // Nachricht per Telegram?
 let arrTelegramUser =["Steffen", "", ""] // hier koennen die Empfaenger eingegeben werden. einfach den namen zwischen "USER1" einegeben und mit "," trennen
 let alexa = false; // Nachricht per Alexa?
 let arrAlexaID = ["ID1", "ID2", "ID3"]; // ID von Alexa eingeben
+let startText = "folgendes Geraet wurde gestartet: "; // Nachricht START
+let endText = "folgendes Geraet hat den Vorgang beendet: "; // Nachricht ENDE
 
 
 /* array INPUT -> muss zur Zeit noch von Hand angepasst werden
-NEU: Es darf nicht mehr der name geandert werden! Es sind derzeit nur folgende Geraete nutzbar (Namen muessen genau uebernommen werden):
-"Trockner"
-"Waschmaschine"
-"Geschirrspueler"
-"Computer"
-"Test"
+Der Name kann frei gewaehlt werden. Neu ist jedoch, dass man einen Geraetetyp auswaehlen muss.
+"Trockner" -> dryer
+"Waschmaschine" -> wama
+"Geschirrspueler" -> diwa
+"Computer" -> computer
+"Wasserkocher" -> wako
+"Test" -> test
 Die Geraete werden spaeter ueber ein dropdown in einer html Liste ausgewaehlt, zur Zeit einfach haendisch ein/auskommentieren mit "//"
 
 Es muss natuerlich weiterhin der energyMessure und der eneryPower angepasst werden,
 wobei energyPower aktuell weiterhin nicht implentiert ist, dass kommt noch!
 */
 let arrGeraeteInput = [
-  //{geraeteName:"Trockner", energyMessure: 'linkeddevices.0.Plugs.Innen.HWR.Trockner.ENERGY_Power', energyPower:'linkeddevices.0.Plugs.Innen.HWR.Trockner.POWER',},
-  //{geraeteName:"Waschmaschine", energyMessure: 'linkeddevices.0.Plugs.Innen.HWR.Waschmaschine.ENERGY_Power', energyPower:'linkeddevices.0.Plugs.Innen.HWR.Waschmaschine.POWER'},
-  //{geraeteName:"Geschirrspueler", energyMessure: 'linkeddevices.0.Plugs.Innen.Kueche.Geschirrspueler.ENERGY_Power', energyPower:'linkeddevices.0.Plugs.Innen.Kueche.Geschirrspueler.POWER'},
-  {geraeteName:"Computer", energyMessure: 'linkeddevices.0.Plugs.Innen.Buero.PC.ENERGY_Power', energyPower:'linkeddevices.0.Plugs.Innen.Buero.PC.POWER'},
-  //{geraeteName:"Wasserkocher", energyMessure: '', energyPower:''},
-  {geraeteName:"Test", energyMessure: "0_userdata.0.Verbrauch.Test.testWert"},
+  //{geraeteName:"Trockner", geraeteTyp: "dryer", energyMessure: 'linkeddevices.0.Plugs.Innen.HWR.Trockner.ENERGY_Power', energyPower:'linkeddevices.0.Plugs.Innen.HWR.Trockner.POWER',},
+  //{geraeteName:"Waschmaschine", geraeteTyp: "wama", energyMessure: 'linkeddevices.0.Plugs.Innen.HWR.Waschmaschine.ENERGY_Power', energyPower:'linkeddevices.0.Plugs.Innen.HWR.Waschmaschine.POWER'},
+  //{geraeteName:"Geschirrspüler", geraeteTyp: "diwa", energyMessure: 'linkeddevices.0.Plugs.Innen.Kueche.Geschirrspueler.ENERGY_Power', energyPower:'linkeddevices.0.Plugs.Innen.Kueche.Geschirrspueler.POWER'},
+  //{geraeteName:"Computer", geraeteTyp: "computer", energyMessure: 'linkeddevices.0.Plugs.Innen.Buero.PC.ENERGY_Power', energyPower:'linkeddevices.0.Plugs.Innen.Buero.PC.POWER'},
+  //{geraeteName:"Wasserkocher", geraeteTyp: "wako", energyMessure: '', energyPower:''},
+  {geraeteName:"Test", geraeteTyp: "test", energyMessure: "0_userdata.0.Verbrauch.Test.testWert"},
 ]
 
 /*
@@ -79,7 +86,7 @@ let arrUsedAlexaIDs = [];
 
 //Klasse erstellen
 class Geraet {
-  constructor(obj, typ, startValue, endValue, startCount, endCount){
+  constructor(obj, zustand, verbrauchAktuell, zustandSchalter, startValue, endValue, startCount, endCount){
     // Attribute
     // Vorgaben
     // DPs
@@ -87,11 +94,12 @@ class Geraet {
     this.energyMessure = obj.energyMessure;
     this.energyPower = obj.energyPower;
     // Strings
+    this.geraeteTyp = obj.geraeteTyp;
     this.einheit = "Watt";
-    this.pfadZustand = "";
-    this.pfadVerbrauchLive = "";
-    this.startnachrichtText = "folgendes Geraet wurde gestartet: " +  typ ;
-    this.endenachrichtText = "folgendes Geraet hat den Vorgang beendet: " + typ ;
+    this.pfadZustand = zustand;
+    this.pfadVerbrauchLive = verbrauchAktuell;
+    this.startnachrichtText = startText +  obj.geraeteName ;
+    this.endenachrichtText = endText + obj.geraeteName ;
     this.pfadAlexa = "" ;
     // boolean
     this.startnachrichtVersendet = false;
@@ -104,10 +112,9 @@ class Geraet {
     this.telegram = telegram;
     this.alexa = alexa;
     // number
-    this.verbrauch = 0;
-    this.gestartet = 0;
-    this.resultStart = 0;
-    this.resultEnd = 0;
+    this.verbrauch = null;
+    this.resultStart = null;
+    this.resultEnd = null;
     // Verbrauchswerte
     this.startValue = startValue;
     this.endValue = endValue;
@@ -126,33 +133,43 @@ class Geraet {
   };
 };
 
+// Objekte erstellen
 arrGeraeteInput.forEach (function (obj) {  // array mit objekten aus class erstellen
-  let objekt;
-  let i = obj;
-  // Objekt bauen (obj, name, startVal, endVal, startCount, endCount)
-  switch (i.geraeteName) {
-    case 'Waschmaschine':
-    const WaMa = new Geraet(obj, i.geraeteName, 30, 5, 2, 70);
+  //DPs erstellen
+  let zustand = (standardPfad + obj.geraeteName + ".Zustand" )
+  createState(zustand, "initialisiere Zustand", JSON.parse('{"type":"string"}'), function () {
+  });
+  let verbrauchAktuell = (standardPfad + obj.geraeteName + ".Verbrauch aktuell" )
+  createState(verbrauchAktuell, 0.0, JSON.parse('{"type":"string"}'), function () {
+  });
+  let zustandSchalter = (standardPfad + obj.geraeteName + ".Zustand Schalter" )
+  createState(zustandSchalter, false, JSON.parse('{"type":"boolean"}'), function () {
+  });
+  // Objekt bauen (obj, startVal, endVal, startCount, endCount)
+  console.debug(obj)
+  switch (obj.geraeteTyp) {
+    case 'wama':
+    const WaMa = new Geraet(obj, zustand, verbrauchAktuell, zustandSchalter, 30, 5, 2, 70);
     arrGeraete.push(WaMa);
     break;
-    case 'Trockner':
-    const Trockner = new Geraet(obj, i.geraeteName, 120, 10, 3, 50);
+    case 'dryer':
+    const Trockner = new Geraet(obj, zustand, verbrauchAktuell, zustandSchalter, 120, 10, 3, 50);
     arrGeraete.push(Trockner);
     break;
-    case 'Geschirrspueler':
-    const GS = new Geraet(obj, unescape("Geschirrsp%FCler%0A"), 20, 5, 2, 100);
+    case 'diwa':
+    const GS = new Geraet(obj, zustand, verbrauchAktuell, zustandSchalter, 20, 5, 2, 100);
     arrGeraete.push(GS);
     break;
-    case 'Computer':
-    const Computer = new Geraet(obj, i.geraeteName, 20, 5, 2, 10);
+    case 'computer':
+    const Computer = new Geraet(obj, zustand, verbrauchAktuell, zustandSchalter, 20, 5, 2, 10);
     arrGeraete.push(Computer);
     break;
-    case 'Wasserkocher':
-    const WaKo = new Geraet(obj, i.geraeteName, 10, 5, 1, 2);
+    case 'wako':
+    const WaKo = new Geraet(obj, zustand, verbrauchAktuell, zustandSchalter, 10, 5, 1, 2);
     arrGeraete.push(WaKo);
     break;
-    case 'Test':
-    const Test = new Geraet(obj, unescape("T%E4st%0A"), 5, 1, 1, 10);
+    case 'test':
+    const Test = new Geraet(obj, zustand, verbrauchAktuell, zustandSchalter, 5, 1, 2, 3);
     arrGeraete.push(Test);
     break;
     default:
@@ -161,69 +178,57 @@ arrGeraeteInput.forEach (function (obj) {  // array mit objekten aus class erste
   }
 });
 
-// Dps erstellen
-arrGeraeteInput.forEach(function(obj, index){
-  let i = (standardPfad + obj.geraeteName + ".Zustand" )
-  createState(i, "initialisiere Zustand", JSON.parse('{"type":"string"}'), function () {
-  });
-  let j = (standardPfad + obj.geraeteName + ".Verbrauch aktuell" )
-  createState(j, 0.0, JSON.parse('{"type":"string"}'), function () {
-  });
-  let k = (standardPfad + obj.geraeteName + ".Zustand Schalter" )
-  createState(k, false, JSON.parse('{"type":"boolean"}'), function () {
-  });
-  arrGeraete[index].pfadZustand = i;
-  arrGeraete[index].pfadVerbrauchLive = j;
-  arrGeraete[index].pfadZustandSchalter = k;
-});
-
 userTelegramIni (arrTelegramUser); //Telegramuser erstellen
 idAlexa (arrAlexaID);    // alexa IDs erstellen
 
 // Auswertung
 arrGeraete.forEach(function(obj, index, arr){
   let i = obj;
-  let j = index;
   let name = obj.geraeteName
   on({id: obj.energyMessure, change: "any"}, function (obj, index, arr) { //trigger auf obj.energyMessure
     let wertNeu = obj.state.val;
     let wertAlt = obj.oldState.val;
-    arrGeraete[j].verbrauch = wertNeu;
-    if (wertNeu > i.startValue && i.gestartet == 0 ) {
+    i.verbrauch = wertNeu;
+    console.log(i);
+    if (wertNeu > i.startValue && i.gestartet == false ) {
+      console.log("Start " + i.arrStart);
+      console.log("Ende" + i.arrAbbruch);
       calcStart (i, wertNeu) //Startwert berechnen und ueberpruefen
-      setState(arrGeraete[j].pfadZustand, "Zustandsermittlung gestartet" , true); // Status in DP schreiben
-      if (i.resultStart > i.startValue) {
+      if (i.resultStart > i.startValue && i.resultStart != null && i.arrStart.length >= i.startCount && i.gestartet == false) {
         i.gestartet = true; // Vorgang gestartet
         i.startZeit = (new Date().getTime()); // Startzeit loggen
+        setState(i.pfadZustand, "in Betrieb" , true); // Status in DP schreiben
         if (i.startnachricht && !i.startnachrichtVersendet) { // Start Benachrichtigung aktiv?
           i.message = i.startnachrichtText; // Start Benachrichtigung aktiv
           message(i);
         };
         i.startnachrichtVersendet = true; // Startnachricht wurde versendet
         i.endenachrichtVersendet = false; // Ende Benachrichtigung freigeben
-      }
+      } else if (i.resultStart < i.startValue && i.resultStart != null && i.arrStart.length >= i.startCount && i.gestartet == false) {
+        i.gestartet = false; // Vorgang gestartet
+        setState(i.pfadZustand, "Standby" , true); // Status in DP schreiben
+      };
     };
-    if (i.gestartet) {
-      calcEnd (i, wertNeu);
+    if (i.gestartet) { // wurde geraet gestartet?
+      calcEnd (i, wertNeu); // endeberechnung durchfuehren
       console.debug(i.geraeteName + " Berechnung gestartet")
     };
-    if (wertNeu > i.endValue && i.gestartet) { // Wert > endValue und Verbrauch lag 1x ueber startValue
-      setState(arrGeraete[j].pfadZustand, "in Betrieb" , true); // Status in DP schreiben
-    } else if (i.gestartet && i.arrAbbruch.length >= i.endCount && i.resultEnd < i.endValue ) { // geraet muss mind. 1x ueber startValue gewesen sein, arrAbbruch muss voll sein und ergebis aus arrAbbruch unter endValue
+    if (i.resultEnd > i.endValue && i.resultEnd != null && i.gestartet) { // Wert > endValue und Verbrauch lag 1x ueber startValue
+      setState(i.pfadZustand, "in Betrieb" , true); // Status in DP schreiben
+    } else if (i.resultEnd < i.endValue && i.resultEnd != null && i.gestartet && i.arrAbbruch.length >= i.endCount) { // geraet muss mind. 1x ueber startValue gewesen sein, arrAbbruch muss voll sein und ergebis aus arrAbbruch unter endValue
       i.gestartet = false; // vorgang beendet
-      setState(arrGeraete[j].pfadZustand, "Vorgang beendet / standby" , true); // Status in DP schreiben
+      setState(i.pfadZustand, "Standby" , true); // Status in DP schreiben
       i.endZeit = (new Date().getTime()); // ende Zeit loggen
+      i.arrStart = []; // array wieder leeren
+      i.arrAbbruch = []; // array wieder leeren
       if (i.endenachricht && !i.endenachrichtVersendet && i.startnachrichtVersendet ) {  // Ende Benachrichtigung aktiv?
         i.message = i.endenachrichtText; // Ende Benachrichtigung aktiv
         message(i);
       }
       i.endenachrichtVersendet = true;
       i.startnachrichtVersendet = false;
-    } else if (!i.gestartet) {
-      setState(arrGeraete[j].pfadZustand, "Vorgang beendet / standby" , true);
-      i.arrAbbruch = []; // array wieder leeren
-    }
-    setState(arrGeraete[j].pfadVerbrauchLive, wertNeu + " " + i.einheit, true);
+    };
+    setState(i.pfadVerbrauchLive, wertNeu + " " + i.einheit, true);
   });
 });
 
@@ -238,15 +243,17 @@ function calcStart (i, wertNeu) { // Calculate values ​​for operation "START
   let ergebnisTemp = 0;
   if (i.arrStart.length < i.startCount) {
     i.arrStart.push(wertNeu);
-    console.debug("array von: " + i.geraeteName + " " + i.arrStart)
+    console.debug("START " + "array von: " + i.geraeteName + " " + i.arrStart)
+    console.debug(i.arrStart.length + " " + i.startCount)
   } else {
     for (let counter = 0; counter < i.arrStart.length; counter++) {
       zahl = parseFloat(i.arrStart[counter]);
       ergebnisTemp = ergebnisTemp + zahl;
     };
+    i.arrStart.push(wertNeu);
     i.resultStart = Math.round((ergebnisTemp / parseFloat(i.arrStart.length)*10)/10);
-    i.arrStart.shift() + i.arrStart.push(wertNeu)
     console.debug("Ergebnis " + i.geraeteName + ": " + i.resultStart + " " + i.einheit)
+    i.arrStart.shift();
   };
 };
 
@@ -255,15 +262,17 @@ function calcEnd (i, wertNeu) { // Calculate values ​​for operation "END"
   let ergebnisTemp = 0;
   if (i.arrAbbruch.length < i.endCount) {
     i.arrAbbruch.push(wertNeu);
-    console.debug("array von: " + i.geraeteName + " " + i.arrAbbruch)
+    console.debug("array von: " + i.geraeteName + " " + i.arrAbbruch);
+    console.debug("ENDE array von: " + i.arrAbbruch.length + " " + i.endCount);
   } else {
     for (let counter = 0; counter < i.arrAbbruch.length; counter++) {
       zahl = parseFloat(i.arrAbbruch[counter]);
       ergebnisTemp = ergebnisTemp + zahl;
     };
+    i.arrAbbruch.push(wertNeu);
     i.resultEnd = Math.round((ergebnisTemp / parseFloat(i.arrAbbruch.length)*10)/10);
-    i.arrAbbruch.shift() + i.arrAbbruch.push(wertNeu)
-    console.debug("Ergebnis " + i.geraeteName + ": " + i.resultEnd + " " + i.einheit)
+    i.arrAbbruch.shift();
+    console.debug(i.geraeteName + " " + i.arrAbbruch);
   };
 };
 

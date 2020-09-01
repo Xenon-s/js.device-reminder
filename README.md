@@ -22,12 +22,10 @@ Befehl in der Tasmota Konsole : TelePeriod 10
 - Alexa-Benachrichtigung (mehrere IDs sind möglich)
 
 # Anleitung
-Ein neues JS Script in iobroker erstellen und das Script aus "script-device-reminder.js" kopieren und einfügen.
-
-'DATENPUNKT VERBRAUCH' Hier muss der DP ausgewaehlt werden, welcher den Verbrauch misst
-'DATENPUNKT SWITCH ON/OFF' Hier wird der Switch ausgewaehlt, der das Geraet AN/AUS schaltet -> aktuell noch nicht implementiert
-
-Die Datenpunkte zur Anzeige in VIS werden automatisch standardmaessig unter "0_userdata.0.Verbrauch." angelegt.
+- Ein neues JS Script in iobroker erstellen und das Script aus "script-device-reminder.js" kopieren und einfügen.
+- 'DATENPUNKT VERBRAUCH' Hier muss der DP ausgewaehlt werden, welcher den Verbrauch misst
+- 'DATENPUNKT SWITCH ON/OFF' Hier wird der Switch ausgewaehlt, der das Geraet AN/AUS schaltet -> aktuell noch nicht implementiert
+- Die Datenpunkte zur Anzeige in VIS werden automatisch standardmaessig unter "0_userdata.0.Verbrauch." angelegt.
 
 array INPUT -> muss zur Zeit noch von Hand angepasst werden
 Der Name kann frei gewaehlt werden. Neu ist jedoch, dass man einen Geraetetyp auswaehlen muss.
@@ -39,8 +37,7 @@ Der Name kann frei gewaehlt werden. Neu ist jedoch, dass man einen Geraetetyp au
 - "Test" -> test
 Die Geraete werden spaeter ueber ein dropdown in einer html Liste ausgewaehlt, zur Zeit einfach haendisch ein/auskommentieren mit "//"
 
-Es muss natuerlich weiterhin der energyMessure und der eneryPower angepasst werden,
-wobei energyPower aktuell weiterhin nicht implentiert ist, dass kommt noch!
+Es muss natuerlich weiterhin der energyMessure und der eneryPower angepasst werden, wobei energyPower aktuell weiterhin nicht implentiert ist, dass kommt noch!
 
 # Changelog
 #### 01.09.2020 (V 0.1)

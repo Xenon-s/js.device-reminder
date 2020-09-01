@@ -6,20 +6,20 @@ Der refresh Intervall vom "Verbrauchswert(heißt bei den meisten Geräten "energ
 Befehl in der Tasmota Konsole : TelePeriod 10
 
 # Welche Geräte können zur Zeit überwacht werden?
-Waschmaschine,
-Trockner,
-Geschirrspüler,
-Wasserkocher,
-Computer,
-Test -> falls man ein Gerät testen möchte, welches nicht in der oben genannten Liste auftaucht
+- Waschmaschine,
+- Trockner,
+- Geschirrspüler,
+- Wasserkocher,
+- Computer,
+- Test -> falls man ein Gerät testen möchte, welches nicht in der oben genannten Liste auftaucht
 
-weitere werden folgen ...
+- weitere werden folgen ...
 
 # Was ist möglich?
-Benachrichtigung beim Gerätestart
-Benachrichtigung beim Vorgangsende des jeweiligen Gerätestart
-Telegram-Benachrichtigung (mehrere IDs sind möglich)
-Alexa-Benachrichtigung (mehrere IDs sind möglich)
+- Benachrichtigung beim Gerätestart
+- Benachrichtigung beim Vorgangsende des jeweiligen Gerätestart
+- Telegram-Benachrichtigung (mehrere IDs sind möglich)
+- Alexa-Benachrichtigung (mehrere IDs sind möglich)
 
 # Anleitung
 Ein neues JS Script in iobroker erstellen und das Script aus "script-device-reminder.js" kopieren und einfügen.

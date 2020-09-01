@@ -61,10 +61,10 @@ Es muss natuerlich weiterhin der energyMessure und der eneryPower angepasst werd
 wobei energyPower aktuell weiterhin nicht implentiert ist, dass kommt noch!
 */
 let arrGeraeteInput = [
-  //{geraeteName:"Trockner", geraeteTyp: "dryer", energyMessure: 'linkeddevices.0.Plugs.Innen.HWR.Trockner.ENERGY_Power', energyPower:'linkeddevices.0.Plugs.Innen.HWR.Trockner.POWER',},
-  //{geraeteName:"Waschmaschine", geraeteTyp: "wama", energyMessure: 'linkeddevices.0.Plugs.Innen.HWR.Waschmaschine.ENERGY_Power', energyPower:'linkeddevices.0.Plugs.Innen.HWR.Waschmaschine.POWER'},
-  //{geraeteName:"Geschirrspüler", geraeteTyp: "diwa", energyMessure: 'linkeddevices.0.Plugs.Innen.Kueche.Geschirrspueler.ENERGY_Power', energyPower:'linkeddevices.0.Plugs.Innen.Kueche.Geschirrspueler.POWER'},
-  //{geraeteName:"Computer", geraeteTyp: "computer", energyMessure: 'linkeddevices.0.Plugs.Innen.Buero.PC.ENERGY_Power', energyPower:'linkeddevices.0.Plugs.Innen.Buero.PC.POWER'},
+  {geraeteName:"Trockner", geraeteTyp: "dryer", energyMessure: 'linkeddevices.0.Plugs.Innen.HWR.Trockner.ENERGY_Power', energyPower:'linkeddevices.0.Plugs.Innen.HWR.Trockner.POWER',},
+  {geraeteName:"Waschmaschine", geraeteTyp: "wama", energyMessure: 'linkeddevices.0.Plugs.Innen.HWR.Waschmaschine.ENERGY_Power', energyPower:'linkeddevices.0.Plugs.Innen.HWR.Waschmaschine.POWER'},
+  {geraeteName:"Geschirrspüler", geraeteTyp: "diwa", energyMessure: 'linkeddevices.0.Plugs.Innen.Kueche.Geschirrspueler.ENERGY_Power', energyPower:'linkeddevices.0.Plugs.Innen.Kueche.Geschirrspueler.POWER'},
+  {geraeteName:"Computer", geraeteTyp: "computer", energyMessure: 'linkeddevices.0.Plugs.Innen.Buero.PC.ENERGY_Power', energyPower:'linkeddevices.0.Plugs.Innen.Buero.PC.POWER'},
   //{geraeteName:"Wasserkocher", geraeteTyp: "wako", energyMessure: '', energyPower:''},
   {geraeteName:"Test", geraeteTyp: "test", energyMessure: "0_userdata.0.Verbrauch.Test.testWert"},
 ]
@@ -189,10 +189,10 @@ arrGeraete.forEach(function(obj, index, arr){
     let wertNeu = obj.state.val;
     let wertAlt = obj.oldState.val;
     i.verbrauch = wertNeu;
-    console.log(i);
+    console.debug(i);
     if (wertNeu > i.startValue && i.gestartet == false ) {
-      console.log("Start " + i.arrStart);
-      console.log("Ende" + i.arrAbbruch);
+      console.debug("Start " + i.arrStart);
+      console.debug("Ende" + i.arrAbbruch);
       calcStart (i, wertNeu) //Startwert berechnen und ueberpruefen
       if (i.resultStart > i.startValue && i.resultStart != null && i.arrStart.length >= i.startCount && i.gestartet == false) {
         i.gestartet = true; // Vorgang gestartet

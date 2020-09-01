@@ -31,22 +31,25 @@ Die Datenpunkte zur Anzeige in VIS werden automatisch standardmaessig unter "0_u
 
 array INPUT -> muss zur Zeit noch von Hand angepasst werden
 Der Name kann frei gewaehlt werden. Neu ist jedoch, dass man einen Geraetetyp auswaehlen muss.
-"Trockner" -> dryer
-"Waschmaschine" -> wama
-"Geschirrspueler" -> diwa
-"Computer" -> computer
-"Wasserkocher" -> wako
-"Test" -> test
+- "Trockner" -> dryer
+- "Waschmaschine" -> wama
+- "Geschirrspueler" -> diwa
+- "Computer" -> computer
+- "Wasserkocher" -> wako
+- "Test" -> test
 Die Geraete werden spaeter ueber ein dropdown in einer html Liste ausgewaehlt, zur Zeit einfach haendisch ein/auskommentieren mit "//"
 
 Es muss natuerlich weiterhin der energyMessure und der eneryPower angepasst werden,
 wobei energyPower aktuell weiterhin nicht implentiert ist, dass kommt noch!
 
 # Changelog
-0.0.2
-(Steffen Feldkamp) Bugfixes und änderung der objekterstellung
+#### 01.09.2020 (V 0.1)
+0.1
+- (Steffen Feldkamp) Bugfixes und änderung der objekterstellung
+
+#### 01.09.2020 (V 0.0.1)
 0.0.1
-(Steffen Feldkamp) initial release
+- (Steffen Feldkamp) initial release
 
 # License
 MIT License

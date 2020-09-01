@@ -1,4 +1,4 @@
-# js.device-reminder ioBroker "beta Script"
+# js.device-reminder: beta Script für ioBroker 
 Dies ist ein beta-script zur Ermittlung und Auswertung von elektrischen Verbrauchen, die mittels Schalt-Mess-Aktoren in ioBroker überwacht werden.
 
 This is a beta script for the determination and evaluation of electrical consumption, which is monitored by means of switching / measuring actuators in ioBroker.

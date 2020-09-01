@@ -28,7 +28,7 @@ Befehl in der Tasmota Konsole : TelePeriod 10
 - Die Datenpunkte zur Anzeige in VIS werden automatisch standardmaessig unter "0_userdata.0.Verbrauch." angelegt.
 
 array INPUT -> muss zur Zeit noch von Hand angepasst werden
-Der Name kann frei gewaehlt werden. Neu ist jedoch, dass man einen Geraetetyp auswaehlen muss.
+Der Name kann frei gewaehlt werden. Neu ist jedoch, dass man einen Geraetetyp auswaehlen muss (bitte die Kürzel eintragen! Beispiel: geraeteTyp:"wama")
 - "Trockner" -> dryer
 - "Waschmaschine" -> wama
 - "Geschirrspueler" -> diwa

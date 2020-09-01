@@ -44,11 +44,9 @@ wobei energyPower aktuell weiterhin nicht implentiert ist, dass kommt noch!
 
 # Changelog
 #### 01.09.2020 (V 0.1)
-0.1
-- (Steffen Feldkamp) Bugfixes und änderung der objekterstellung
+- (Steffen Feldkamp) Bugfixes und änderung der Objekterstellung
 
 #### 01.09.2020 (V 0.0.1)
-0.0.1
 - (Steffen Feldkamp) initial release
 
 # License

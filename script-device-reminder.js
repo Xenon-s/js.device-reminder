@@ -1,5 +1,5 @@
 // Script zur Verbrauchsueberwachung von elektrischen Geraeten ueber ioBroker
-const version = "version 0.3.4 beta, 20.08.2020, letztes update 01.09.2020";
+const version = "version 0.4.0 beta, 20.08.2020, letztes update 01.09.2020";
 const erstellt = "s. feldkamp"
 
 /* Changelog
@@ -17,13 +17,31 @@ Version 0.4.0 Berechnung fuer den Startwert eingefuegt
 ******************************************************************************************************************************************************
 
 Dieses Script dient dazu, eine variable Anzahl an Geraeten zu ueberwachen und bei eintreten eines Ereignisses eine Meldung auszugeben.
+In der Beta Phase muss man im array "Input" seine Geraete noch von Hand hinzufuegen, dass wird sich spaeter noch aendern. Dazu einfach die folgende Zeile kopieren
+und in das arrGeraeteInput einfuegen.
 
+{geraeteName:"GERAETENAME", energyMessure: 'DATENPUNKT VERBRAUCH', energyPower:'DATENPUNKT SWITCH ON/OFF'},
+
+"GERAETENAME" kann durch einen beliebigen Namen ersetzt werden (keine Umlaute!)
 'DATENPUNKT VERBRAUCH' Hier muss der DP ausgewaehlt werden, welcher den Verbrauch misst
 'DATENPUNKT SWITCH ON/OFF' Hier wird der Switch ausgewaehlt, der das Geraet AN/AUS schaltet -> aktuell noch nicht implementiert
 
 Die Datenpunkte zur Anzeige in VIS werden automatisch standardmaessig unter "0_userdata.0.Verbrauch." angelegt.
 
-array INPUT -> muss zur Zeit noch von Hand angepasst werden
+*/
+
+// Benutzereingaben, koennen individuell angepasst werden
+// standardpfad fuer zustandsausgabe
+let standardPfad ="0_userdata.0.Verbrauch."; // kann angepasst werden
+let startNachricht = true; // Nachricht bei Geraetestart erhalten?
+let endeNachricht = true; // Nachricht bei Geraetevorgang ende erhalten?
+let telegram = true; // Nachricht per Telegram?
+let arrTelegramUser =["Steffen", "", ""] // hier koennen die Empfaenger eingegeben werden. einfach den namen zwischen "USER1" einegeben und mit "," trennen
+let alexa = false; // Nachricht per Alexa?
+let arrAlexaID = ["ID1", "ID2", "ID3"]; // ID von Alexa eingeben
+
+
+/* array INPUT -> muss zur Zeit noch von Hand angepasst werden
 NEU: Es darf nicht mehr der name geandert werden! Es sind derzeit nur folgende Geraete nutzbar (Namen muessen genau uebernommen werden):
 "Trockner"
 "Waschmaschine"
@@ -43,16 +61,6 @@ let arrGeraeteInput = [
   //{geraeteName:"Wasserkocher", energyMessure: '', energyPower:''},
   {geraeteName:"Test", energyMessure: "0_userdata.0.Verbrauch.Test.testWert"},
 ]
-
-// Benutzereingaben, koennen individuell angepasst werden
-// standardpfad fuer zustandsausgabe
-let standardPfad ="0_userdata.0.Verbrauch."; // kann angepasst werden
-let startNachricht = true; // Nachricht bei Geraetestart erhalten?
-let endeNachricht = true; // Nachricht bei Geraetevorgang ende erhalten?
-let telegram = true; // Nachricht per Telegram?
-let arrTelegramUser =["Steffen", "", ""] // hier koennen die Empfaenger eingegeben werden. einfach den namen zwischen "USER1" einegeben und mit "," trennen
-let alexa = false; // Nachricht per Alexa?
-let arrAlexaID = ["ID1", "ID2", "ID3"]; // ID von Alexa eingeben
 
 /*
 *****************************************************
@@ -183,8 +191,9 @@ arrGeraete.forEach(function(obj, index, arr){
     arrGeraete[j].verbrauch = wertNeu;
     if (wertNeu > i.startValue && i.gestartet == 0 ) {
       calcStart (i, wertNeu) //Startwert berechnen und ueberpruefen
+      setState(arrGeraete[j].pfadZustand, "Zustandsermittlung gestartet" , true); // Status in DP schreiben
       if (i.resultStart > i.startValue) {
-        i.gestartet = 1; // Vorgang gestartet
+        i.gestartet = true; // Vorgang gestartet
         i.startZeit = (new Date().getTime()); // Startzeit loggen
         if (i.startnachricht && !i.startnachrichtVersendet) { // Start Benachrichtigung aktiv?
           i.message = i.startnachrichtText; // Start Benachrichtigung aktiv
@@ -201,7 +210,7 @@ arrGeraete.forEach(function(obj, index, arr){
     if (wertNeu > i.endValue && i.gestartet) { // Wert > endValue und Verbrauch lag 1x ueber startValue
       setState(arrGeraete[j].pfadZustand, "in Betrieb" , true); // Status in DP schreiben
     } else if (i.gestartet && i.arrAbbruch.length >= i.endCount && i.resultEnd < i.endValue ) { // geraet muss mind. 1x ueber startValue gewesen sein, arrAbbruch muss voll sein und ergebis aus arrAbbruch unter endValue
-      i.gestartet = 0; // vorgang beendet
+      i.gestartet = false; // vorgang beendet
       setState(arrGeraete[j].pfadZustand, "Vorgang beendet / standby" , true); // Status in DP schreiben
       i.endZeit = (new Date().getTime()); // ende Zeit loggen
       if (i.endenachricht && !i.endenachrichtVersendet && i.startnachrichtVersendet ) {  // Ende Benachrichtigung aktiv?

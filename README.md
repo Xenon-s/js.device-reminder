@@ -40,6 +40,11 @@ Die Geraete werden spaeter ueber ein dropdown in einer html Liste ausgewaehlt, z
 Es muss natuerlich weiterhin der energyMessure und der eneryPower angepasst werden, wobei energyPower aktuell weiterhin nicht implentiert ist, dass kommt noch!
 
 # Changelog
+#### 02.09.2020 (V 0.3)
+Version 0.3
+- (Steffen Feldkamp) Laufzeit eingefuegt
+- (Steffen Feldkamp) kleine Optimierungen eingefuegt bei if()-Abfragen
+
 #### 02.09.2020 (V 0.2)
 - (Steffen Feldkamp) -Fehler in der Berechnung, sowie kleinere Fehler behoben
 

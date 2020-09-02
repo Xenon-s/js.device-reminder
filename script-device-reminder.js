@@ -1,5 +1,5 @@
 // Script zur Verbrauchsueberwachung von elektrischen Geraeten ueber ioBroker
-const version = "version 0.2 beta, 20.08.2020, letztes update 02.09.2020, 08 Uhr, S Feldkamp auf Stand 0.2";
+const version = "version 0.3 beta, 20.08.2020, letztes update 02.09.2020, 15:30 Uhr, S Feldkamp auf Stand 0.3";
 const erstellt = "s. feldkamp"
 
 /* Changelog
@@ -21,6 +21,10 @@ Version 0.1
 Version 0.2
 -Fehler in der Berechnung behoben
 -kleinere Fehler behoben
+
+Version 0.3
+- Laufzeit eingefuegt
+- kleine Optimierungen eingefuegt bei if()-Abfragen
 
 ******************************************************************************************************************************************************
 
@@ -90,7 +94,7 @@ let arrUsedAlexaIDs = [];
 
 //Klasse erstellen
 class Geraet {
-  constructor(obj, zustand, verbrauchAktuell, startValue, endValue, startCount, endCount){
+  constructor(obj, zustand, verbrauchAktuell, laufzeit, stateDebug, startValue, endValue, startCount, endCount){
     // Attribute
     // Vorgaben
     // DPs
@@ -102,6 +106,7 @@ class Geraet {
     this.einheit = "Watt";
     this.pfadZustand = zustand;
     this.pfadVerbrauchLive = verbrauchAktuell;
+    this.pfadDebug = stateDebug;
     this.startnachrichtText = startText +  obj.geraeteName ;
     this.endenachrichtText = endText + obj.geraeteName ;
     this.pfadAlexa = "" ;
@@ -129,7 +134,7 @@ class Geraet {
     this.timeout = null;
     this.startZeit = 0;
     this.endZeit = 0;
-    this.gesamtZeit = 0;
+    this.gesamtZeit = laufzeit;
     // array
     this.arrStart = [];
     this.arrAbbruch = [];
@@ -146,31 +151,37 @@ arrGeraeteInput.forEach (function (obj) {  // array mit objekten aus class erste
   let verbrauchAktuell = (standardPfad + obj.geraeteName + ".Verbrauch aktuell" )
   createState(verbrauchAktuell, 0.0, JSON.parse('{"type":"string"}'), function () {
   });
+  let stateDebug = (standardPfad + obj.geraeteName + ".stateDebug" )
+  createState(stateDebug, 0.0, JSON.parse('{"type":"number"}'), function () {
+  });
+  let laufzeit = (standardPfad + obj.geraeteName + ".Laufzeit" )
+  createState(laufzeit, "00:00:00" , JSON.parse('{"type":"string"}'), function () {
+  });
   // Objekt bauen (obj, startVal, endVal, startCount, endCount)
   console.debug(obj)
   switch (obj.geraeteTyp) {
     case 'wama':
-    const WaMa = new Geraet(obj, zustand, verbrauchAktuell, 30, 5, 3, 70);
+    const WaMa = new Geraet(obj, zustand, verbrauchAktuell, laufzeit, stateDebug, 30, 5, 3, 70);
     arrGeraete.push(WaMa);
     break;
     case 'dryer':
-    const Trockner = new Geraet(obj, zustand, verbrauchAktuell, 120, 10, 3, 50);
+    const Trockner = new Geraet(obj, zustand, verbrauchAktuell, laufzeit, stateDebug, 120, 10, 3, 50);
     arrGeraete.push(Trockner);
     break;
     case 'diwa':
-    const GS = new Geraet(obj, zustand, verbrauchAktuell, 20, 5, 3, 100);
+    const GS = new Geraet(obj, zustand, verbrauchAktuell, laufzeit, stateDebug, 20, 5, 3, 100);
     arrGeraete.push(GS);
     break;
     case 'computer':
-    const Computer = new Geraet(obj, zustand, verbrauchAktuell, 20, 5, 3, 10);
+    const Computer = new Geraet(obj, zustand, verbrauchAktuell, laufzeit, stateDebug, 20, 5, 3, 10);
     arrGeraete.push(Computer);
     break;
     case 'wako':
-    const WaKo = new Geraet(obj, zustand, verbrauchAktuell, 10, 5, 2, 2);
+    const WaKo = new Geraet(obj, zustand, verbrauchAktuell, laufzeit, stateDebug, 10, 5, 2, 2);
     arrGeraete.push(WaKo);
     break;
     case 'test':
-    const Test = new Geraet(obj, zustand, verbrauchAktuell, 5, 1, 3, 3);
+    const Test = new Geraet(obj, zustand, verbrauchAktuell, laufzeit, stateDebug, 15, 10, 3, 3);
     arrGeraete.push(Test);
     break;
     default:
@@ -190,15 +201,12 @@ arrGeraete.forEach(function(obj, index, arr){
     let wertNeu = obj.state.val;
     let wertAlt = obj.oldState.val;
     i.verbrauch = wertNeu;
-    console.debug(i);
     if (wertNeu > i.startValue && i.gestartet == false ) {
-      console.debug("Start " + i.arrStart);
-      console.debug("Ende" + i.arrAbbruch);
-      calcStart (i, wertNeu) //Startwert berechnen und ueberpruefen
+      i.startZeit = Date.now(); // Startzeit loggen
+      calcStart (i, wertNeu); //Startwert berechnen und ueberpruefen
       if (i.resultStart > i.startValue && i.resultStart != null && i.arrStart.length >= i.startCount && i.gestartet == false) {
         i.gestartet = true; // Vorgang gestartet
-        i.startZeit = (new Date().getTime()); // Startzeit loggen
-        setState(i.pfadZustand, "in Betrieb" , true); // Status in DP schreiben
+        setState(i.pfadZustand, "gestartet" , true); // Status in DP schreiben
         if (i.startnachricht && !i.startnachrichtVersendet) { // Start Benachrichtigung aktiv?
           i.message = i.startnachrichtText; // Start Benachrichtigung aktiv
           message(i);
@@ -209,19 +217,22 @@ arrGeraete.forEach(function(obj, index, arr){
         i.gestartet = false; // Vorgang gestartet
         setState(i.pfadZustand, "Standby" , true); // Status in DP schreiben
       };
-    } else {
-        i.arrStart = []; // array wieder leeren
-        console.debug("Startphase abgebrochen, array Start wieder geloescht")
+    } else if (i.arrStart.length != 0 && i.gestartet == false) {
+      i.arrStart = []; // array wieder leeren
+      console.debug("Startphase abgebrochen, array Start wieder geloescht");
+      setState(i.pfadZustand, "ausgeschaltet" , true); // Status in DP schreiben
     };
     if (i.gestartet) { // wurde geraet gestartet?
       calcEnd (i, wertNeu); // endeberechnung durchfuehren
     };
+    console.debug("Name: " + i.geraeteName + " Ergebnis ENDE: " + i.resultEnd + " Wert ENDE: " + i.endValue + " gestartet: " + i.gestartet + " Arraylength: " + i.arrAbbruch.length + " Zaehler Arr Ende: " + i.endCount)
     if (i.resultEnd > i.endValue && i.resultEnd != null && i.gestartet) { // Wert > endValue und Verbrauch lag 1x ueber startValue
       setState(i.pfadZustand, "in Betrieb" , true); // Status in DP schreiben
-    } else if (i.resultEnd < i.endValue && i.resultEnd != null && i.gestartet && i.arrAbbruch.length >= i.endCount) { // geraet muss mind. 1x ueber startValue gewesen sein, arrAbbruch muss voll sein und ergebis aus arrAbbruch unter endValue
+      time(i);
+    } else if (i.resultEnd < i.endValue && i.resultEnd != null && i.gestartet && i.arrAbbruch.length >= (i.endCount / 2)) { // geraet muss mind. 1x ueber startValue gewesen sein, arrAbbruch muss voll sein und ergebis aus arrAbbruch unter endValue
       i.gestartet = false; // vorgang beendet
       setState(i.pfadZustand, "Standby" , true); // Status in DP schreiben
-      i.endZeit = (new Date().getTime()); // ende Zeit loggen
+      i.endZeit = Date.now(); // ende Zeit loggen
       i.arrStart = []; // array wieder leeren
       i.arrAbbruch = []; // array wieder leeren
       if (i.endenachricht && !i.endenachrichtVersendet && i.startnachrichtVersendet ) {  // Ende Benachrichtigung aktiv?
@@ -235,9 +246,11 @@ arrGeraete.forEach(function(obj, index, arr){
   });
 });
 
-/****************************************************
+/*
+*****************************************************
 ************ functions and calculations  ************
-*****************************************************/
+*****************************************************
+*/
 
 function calcStart (i, wertNeu) { // Calculate values ​​for operation "START"
   console.debug("Startwertberechnung wird fuer " + i.geraeteName + " ausgefuehrt")
@@ -276,9 +289,20 @@ function calcEnd (i, wertNeu) { // Calculate values ​​for operation "END"
   console.debug("Array Ende Laenge: " + i.arrAbbruch.length + ", endCounter: " + i.endCount)
   console.debug("Array Ende " + i.arrAbbruch)
   console.debug("Ergebnis " + i.geraeteName + ": " + i.resultEnd + " " + i.einheit)
-  if (i.arrAbbruch.length >= i.endCount) {
+  if (i.arrAbbruch.length > i.endCount) {
     i.arrAbbruch.shift();
   };
+};
+
+function time (i) {
+  //Laufzeit berechnen
+  let diff;
+  let time = "00:00:00";
+  let vergleichsZeit = Date.now();
+  let startZeit = i.startZeit;
+  diff = (vergleichsZeit - startZeit);
+  time = formatDate(Math.round(diff),"hh:mm:ss");
+  setState(i.gesamtZeit, time , true); // Status in DP schreiben
 };
 
 function userTelegramIni (arrTelegramUser) { // "user telegram" ermitteln
@@ -289,7 +313,6 @@ function userTelegramIni (arrTelegramUser) { // "user telegram" ermitteln
     };
   };
   userTelegram = arrTemp.join(',');
-  console.debug(userTelegram);
 };
 
 function idAlexa (arrAlexaID) { // Alexa message ausgeben
@@ -305,7 +328,6 @@ function idAlexa (arrAlexaID) { // Alexa message ausgeben
 };
 
 function message (i) { // telegram nachricht versenden
-  console.debug(arrUsedAlexaIDs);
   if (i.telegram) {
     sendTo("telegram", "send", {
       text: i.message,
@@ -314,7 +336,6 @@ function message (i) { // telegram nachricht versenden
   };
   if (i.alexa) {    // alexa quatschen lassen
     for (let counter = 0; counter < arrUsedAlexaIDs.length; counter++) {
-      console.debug()
       setState(arrUsedAlexaIDs[counter], i.message);
     };
   };

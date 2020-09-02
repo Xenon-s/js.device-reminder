@@ -1,5 +1,5 @@
-# js.device-reminder: beta Script für ioBroker
-Dies ist ein beta-script zur Ermittlung und Auswertung von elektrischen Verbrauchen, die mittels Schalt-Mess-Aktoren in ioBroker überwacht werden.
+# js.device-reminder: Überwachungsscript für ioBroker (Version 0.2 Beta)
+Dies ist ein beta-script zur Ermittlung und Auswertung von elektrischen Verbrauchen, die mittels Schalt-Mess-Aktoren in ioBroker überwacht werden. Bei Erreichen des Start oder Endzustandes kann man sich zusätzlich benachrichtigen lassen.
 
 # Was sollte beachtet werden?
 Der refresh Intervall vom "Verbrauchswert(heißt bei den meisten Geräten "energy")" sollte nicht mehr als 10 Sekunden betragen, da es sonst zu sehr stark verzögerten Meldungen kommen kann.
@@ -40,6 +40,9 @@ Die Geraete werden spaeter ueber ein dropdown in einer html Liste ausgewaehlt, z
 Es muss natuerlich weiterhin der energyMessure und der eneryPower angepasst werden, wobei energyPower aktuell weiterhin nicht implentiert ist, dass kommt noch!
 
 # Changelog
+#### 02.09.2020 (V 0.2)
+- (Steffen Feldkamp) -Fehler in der Berechnung, sowie kleinere Fehler behoben
+
 #### 01.09.2020 (V 0.1)
 - (Steffen Feldkamp) Bugfixes und änderung der Objekterstellung
 

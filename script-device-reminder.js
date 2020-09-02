@@ -1,22 +1,26 @@
 // Script zur Verbrauchsueberwachung von elektrischen Geraeten ueber ioBroker
-const version = "version 0.1 beta, 20.08.2020, letztes update 01.09.2020, 17 Uhr, S Feldkamp auf Stand 0.1";
+const version = "version 0.2 beta, 20.08.2020, letztes update 02.09.2020, 08 Uhr, S Feldkamp auf Stand 0.2";
 const erstellt = "s. feldkamp"
 
 /* Changelog
 Version 0.0.1
-Script erstellt
+-Script erstellt
 
 Version 0.1
-erste Tests und buxfixes
-alexa und telegram hinzugefuegt
-bugfixes
-berechnung fuer Geraete eingefuegt und timeout entfernt
-unterschiedliche Telegramnutzer sind nun moeglich
-mehrere Alexa IDs sind nun moeglich
-objekterstellung ueberarbeitet und feste Werte hinzugefuegt
-Berechnung wurde nochmals ueberarbeitet
-Berechnung fuer den Startwert eingefuegt
-Auswertung und objekterstellung ueberarbeitet
+-erste Tests und buxfixes
+-lexa und telegram hinzugefuegt
+-bugfixes
+-berechnung fuer Geraete eingefuegt und timeout entfernt
+-unterschiedliche Telegramnutzer sind nun moeglich
+-mehrere Alexa IDs sind nun moeglich
+-objekterstellung ueberarbeitet und feste Werte hinzugefuegt
+-Berechnung wurde nochmals ueberarbeitet
+-Berechnung fuer den Startwert eingefuegt
+-Auswertung und objekterstellung ueberarbeitet
+
+Version 0.2
+-Fehler in der Berechnung behoben
+-kleinere Fehler behoben
 
 ******************************************************************************************************************************************************
 
@@ -86,7 +90,7 @@ let arrUsedAlexaIDs = [];
 
 //Klasse erstellen
 class Geraet {
-  constructor(obj, zustand, verbrauchAktuell, zustandSchalter, startValue, endValue, startCount, endCount){
+  constructor(obj, zustand, verbrauchAktuell, startValue, endValue, startCount, endCount){
     // Attribute
     // Vorgaben
     // DPs
@@ -142,34 +146,31 @@ arrGeraeteInput.forEach (function (obj) {  // array mit objekten aus class erste
   let verbrauchAktuell = (standardPfad + obj.geraeteName + ".Verbrauch aktuell" )
   createState(verbrauchAktuell, 0.0, JSON.parse('{"type":"string"}'), function () {
   });
-  let zustandSchalter = (standardPfad + obj.geraeteName + ".Zustand Schalter" )
-  createState(zustandSchalter, false, JSON.parse('{"type":"boolean"}'), function () {
-  });
   // Objekt bauen (obj, startVal, endVal, startCount, endCount)
   console.debug(obj)
   switch (obj.geraeteTyp) {
     case 'wama':
-    const WaMa = new Geraet(obj, zustand, verbrauchAktuell, zustandSchalter, 30, 5, 2, 70);
+    const WaMa = new Geraet(obj, zustand, verbrauchAktuell, 30, 5, 3, 70);
     arrGeraete.push(WaMa);
     break;
     case 'dryer':
-    const Trockner = new Geraet(obj, zustand, verbrauchAktuell, zustandSchalter, 120, 10, 3, 50);
+    const Trockner = new Geraet(obj, zustand, verbrauchAktuell, 120, 10, 3, 50);
     arrGeraete.push(Trockner);
     break;
     case 'diwa':
-    const GS = new Geraet(obj, zustand, verbrauchAktuell, zustandSchalter, 20, 5, 2, 100);
+    const GS = new Geraet(obj, zustand, verbrauchAktuell, 20, 5, 3, 100);
     arrGeraete.push(GS);
     break;
     case 'computer':
-    const Computer = new Geraet(obj, zustand, verbrauchAktuell, zustandSchalter, 20, 5, 2, 10);
+    const Computer = new Geraet(obj, zustand, verbrauchAktuell, 20, 5, 3, 10);
     arrGeraete.push(Computer);
     break;
     case 'wako':
-    const WaKo = new Geraet(obj, zustand, verbrauchAktuell, zustandSchalter, 10, 5, 1, 2);
+    const WaKo = new Geraet(obj, zustand, verbrauchAktuell, 10, 5, 2, 2);
     arrGeraete.push(WaKo);
     break;
     case 'test':
-    const Test = new Geraet(obj, zustand, verbrauchAktuell, zustandSchalter, 5, 1, 2, 3);
+    const Test = new Geraet(obj, zustand, verbrauchAktuell, 5, 1, 3, 3);
     arrGeraete.push(Test);
     break;
     default:
@@ -208,10 +209,12 @@ arrGeraete.forEach(function(obj, index, arr){
         i.gestartet = false; // Vorgang gestartet
         setState(i.pfadZustand, "Standby" , true); // Status in DP schreiben
       };
+    } else {
+        i.arrStart = []; // array wieder leeren
+        console.debug("Startphase abgebrochen, array Start wieder geloescht")
     };
     if (i.gestartet) { // wurde geraet gestartet?
       calcEnd (i, wertNeu); // endeberechnung durchfuehren
-      console.debug(i.geraeteName + " Berechnung gestartet")
     };
     if (i.resultEnd > i.endValue && i.resultEnd != null && i.gestartet) { // Wert > endValue und Verbrauch lag 1x ueber startValue
       setState(i.pfadZustand, "in Betrieb" , true); // Status in DP schreiben
@@ -232,47 +235,49 @@ arrGeraete.forEach(function(obj, index, arr){
   });
 });
 
-/*
-*****************************************************
+/****************************************************
 ************ functions and calculations  ************
-*****************************************************
-*/
+*****************************************************/
 
 function calcStart (i, wertNeu) { // Calculate values ​​for operation "START"
+  console.debug("Startwertberechnung wird fuer " + i.geraeteName + " ausgefuehrt")
   let zahl;
   let ergebnisTemp = 0;
-  if (i.arrStart.length < i.startCount) {
-    i.arrStart.push(wertNeu);
-    console.debug("START " + "array von: " + i.geraeteName + " " + i.arrStart)
-    console.debug(i.arrStart.length + " " + i.startCount)
-  } else {
-    for (let counter = 0; counter < i.arrStart.length; counter++) {
-      zahl = parseFloat(i.arrStart[counter]);
-      ergebnisTemp = ergebnisTemp + zahl;
-    };
-    i.arrStart.push(wertNeu);
-    i.resultStart = Math.round((ergebnisTemp / parseFloat(i.arrStart.length)*10)/10);
-    console.debug("Ergebnis " + i.geraeteName + ": " + i.resultStart + " " + i.einheit)
-    i.arrStart.shift();
+  let debug = "";
+  i.arrStart.push(wertNeu);
+  // Berechnung durchfuehren
+  for (let counter = 0; counter < i.arrStart.length; counter++) {
+    zahl = parseFloat(i.arrStart[counter]);
+    ergebnisTemp = ergebnisTemp + zahl;
   };
+  // Ergebnis an obj uebergeben
+  i.resultStart = Math.round((ergebnisTemp / parseFloat(i.arrStart.length)*10)/10);
+  debug = i.resultStart;
+  setState(i.pfadDebug, debug, true); // DEBUG!!
+  console.debug("Array Start: " + i.arrStart)
+  console.debug("Ergebnis " + i.geraeteName + ": " + i.resultStart + " " + i.einheit)
 };
 
 function calcEnd (i, wertNeu) { // Calculate values ​​for operation "END"
+  console.debug("Endwertberechnung wird fuer " + i.geraeteName + " ausgefuehrt")
   let zahl;
   let ergebnisTemp = 0;
-  if (i.arrAbbruch.length < i.endCount) {
-    i.arrAbbruch.push(wertNeu);
-    console.debug("array von: " + i.geraeteName + " " + i.arrAbbruch);
-    console.debug("ENDE array von: " + i.arrAbbruch.length + " " + i.endCount);
-  } else {
-    for (let counter = 0; counter < i.arrAbbruch.length; counter++) {
-      zahl = parseFloat(i.arrAbbruch[counter]);
-      ergebnisTemp = ergebnisTemp + zahl;
-    };
-    i.arrAbbruch.push(wertNeu);
-    i.resultEnd = Math.round((ergebnisTemp / parseFloat(i.arrAbbruch.length)*10)/10);
+  let debug = "";
+  i.arrAbbruch.push(wertNeu); //neuen Wert ins array schreiben
+  // Berechnung durchfuehren
+  for (let counter = 0; counter < i.arrAbbruch.length; counter++) {
+    zahl = parseFloat(i.arrAbbruch[counter]);
+    ergebnisTemp = ergebnisTemp + zahl;
+  };
+  // Ergebnis an obj uebergeben
+  i.resultEnd = Math.round((ergebnisTemp / parseFloat(i.arrAbbruch.length)*10)/10);
+  debug = i.resultEnd;
+  setState(i.pfadDebug, debug, true); // DEBUG!!
+  console.debug("Array Ende Laenge: " + i.arrAbbruch.length + ", endCounter: " + i.endCount)
+  console.debug("Array Ende " + i.arrAbbruch)
+  console.debug("Ergebnis " + i.geraeteName + ": " + i.resultEnd + " " + i.einheit)
+  if (i.arrAbbruch.length >= i.endCount) {
     i.arrAbbruch.shift();
-    console.debug(i.geraeteName + " " + i.arrAbbruch);
   };
 };
 

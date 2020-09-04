@@ -20,30 +20,40 @@ Befehl in der Tasmota Konsole : TelePeriod 10
 - Benachrichtigung beim Vorgangsende des jeweiligen Gerätestart
 - Telegram-Benachrichtigung (mehrere IDs sind möglich)
 - Alexa-Benachrichtigung (mehrere IDs sind möglich)
+- WhatsApp-Benachrichtung
+- Geräte bei Bedarf abschalten, wenn Vorgang beendet erkannt wurde
 
 # Anleitung
 - Ein neues JS Script in iobroker erstellen und das Script aus "script-device-reminder.js" kopieren und einfügen.
-- 'DATENPUNKT VERBRAUCH' Hier muss der DP ausgewaehlt werden, welcher den Verbrauch misst
-- 'DATENPUNKT SWITCH ON/OFF' Hier wird der Switch ausgewaehlt, der das Geraet AN/AUS schaltet -> aktuell noch nicht implementiert
-- Die Datenpunkte zur Anzeige in VIS werden automatisch standardmaessig unter "0_userdata.0.Verbrauch." angelegt.
 
-array INPUT -> muss zur Zeit noch von Hand angepasst werden
-Der Name kann frei gewaehlt werden. Neu ist jedoch, dass man einen Geraetetyp auswaehlen muss (bitte die Kürzel eintragen! Beispiel: geraeteTyp:"wama")
+- {geraeteName:"GERÄTENAME", geraeteTyp: "GERÄTETYP", autoOff: false, energyMessure: 'DP Messwert', energyPower:'DP Switch Schalter ON/OFF'},
+
+- 'GERAETENAME' kann durch einen beliebigen Namen ersetzt werden
+- 'GERÄTETYP' hier muss ein Gerätetyp aus der Liste unten ausgewählt werden
+- 'autoOff' hier kann für das jeweilige Gerät aktiviert werden, ob es nach Beendigung ausgeschaltet werden soll (ja= true / nein = false)
+- 'DATENPUNKT VERBRAUCH' Hier muss der DP ausgewaehlt werden, welcher den Verbrauch misst
+- 'DATENPUNKT SWITCH ON/OFF' Hier wird der Switch ausgewaehlt, der das Geraet AN/AUS schaltet
+
+- Liste aktuell verfügbarer Gerätetypen (es muss das kürzel eingefügt werden, zb. wama):
 - "Trockner" -> dryer
 - "Waschmaschine" -> wama
 - "Geschirrspueler" -> diwa
 - "Computer" -> computer
 - "Wasserkocher" -> wako
 - "Test" -> test
-Die Geraete werden spaeter ueber ein dropdown in einer html Liste ausgewaehlt, zur Zeit einfach haendisch ein/auskommentieren mit "//"
 
-Es muss natuerlich weiterhin der energyMessure und der eneryPower angepasst werden, wobei energyPower aktuell weiterhin nicht implentiert ist, dass kommt noch!
+- Die Datenpunkte zur Anzeige in VIS werden automatisch standardmaessig unter "0_userdata.0.Verbrauch." angelegt.
 
 # Changelog
+#### 02.09.2020 (V 0.4)
+- (Steffen Feldkamp) automatisches Ausschalten von Aktoren nach Beendigung des Vorgangs implementiert
+- manual angepasst
+
 #### 02.09.2020 (V 0.3)
 Version 0.3
 - (Steffen Feldkamp) Laufzeit eingefuegt
 - (Steffen Feldkamp) kleine Optimierungen eingefuegt bei if()-Abfragen
+- (Steffen Feldkamp) Whatsapp Benachrichtung eingefuegt
 
 #### 02.09.2020 (V 0.2)
 - (Steffen Feldkamp) -Fehler in der Berechnung, sowie kleinere Fehler behoben

@@ -30,12 +30,12 @@ Befehl in der Tasmota Konsole : TelePeriod 10
 
 ### Eigenes Gerät hinzufügen
 3. Die gewünschten Geräte hinzufügen wie im folgenden beschrieben:
-**{geraeteName:"GERÄTENAME", geraeteTyp: "GERÄTETYP", autoOff: false, energyMessure: 'DP Messwert', energyPower:'DP Switch Schalter ON/OFF'},** kopieren und in das Array "arrGeraeteInput" einfügen
-**'GERAETENAME'** kann durch einen beliebigen Namen ersetzt werden
-**'GERÄTETYP'**' hier muss ein Gerätetyp aus der Liste unten ausgewählt werden
-**'autoOff'**' hier kann für das jeweilige Gerät aktiviert werden, ob es nach Beendigung ausgeschaltet werden soll (ja= true / nein = false)
-**'DATENPUNKT VERBRAUCH'**' Hier muss der DP ausgewaehlt werden, welcher den Verbrauch misst
-**'DATENPUNKT SWITCH ON/OFF'**' Hier wird der Switch ausgewaehlt, der das Geraet AN/AUS schaltet
+  - **{geraeteName:"GERÄTENAME", geraeteTyp: "GERÄTETYP", autoOff: false, energyMessure: 'DP Messwert', energyPower:'DP Switch Schalter ON/OFF'},** kopieren und in das Array "arrGeraeteInput" einfügen
+  - **'GERAETENAME'** kann durch einen beliebigen Namen ersetzt werden
+  - **'GERÄTETYP'**' hier muss ein Gerätetyp aus der Liste unten ausgewählt werden
+  - **'autoOff'**' hier kann für das jeweilige Gerät aktiviert werden, ob es nach Beendigung ausgeschaltet werden soll (ja= true / nein = false)
+  - **'DATENPUNKT VERBRAUCH'**' Hier muss der DP ausgewaehlt werden, welcher den Verbrauch misst
+  - **'DATENPUNKT SWITCH ON/OFF'**' Hier wird der Switch ausgewaehlt, der das Geraet AN/AUS schaltet
 
 - Liste aktuell verfügbarer Gerätetypen (es muss das kürzel eingefügt werden, zb. wama):
 1. **Trockner** -> dryer

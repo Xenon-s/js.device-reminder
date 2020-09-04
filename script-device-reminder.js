@@ -1,5 +1,5 @@
 // Script zur Verbrauchsueberwachung von elektrischen Geraeten ueber ioBroker
-const version = "version 0.4.0 beta, 20.08.2020, letztes update 03.09.2020, 17:00 Uhr, S Feldkamp auf Stand 0.4.0";
+const version = "version 0.4.0 beta, 20.08.2020, letztes update 03.09.2020, 12:00 Uhr, S Feldkamp auf Stand 0.4.0";
 const erstellt = "s. feldkamp"
 
 /* Changelog
@@ -33,6 +33,7 @@ Version 0.3.1
 
 Version 0.4.0
 - automatisches Ausschalten von Aktoren nach Beendigung des Vorgangs implementiert
+- Berechnung für StartCalc angepasst
 
 *****************************************************
 ********* Benutzereingaben und Anleitung ************
@@ -77,8 +78,7 @@ let arrGeraeteInput = [
   {geraeteName:"Waschmaschine", geraeteTyp: "wama", autoOff: false, energyMessure: 'linkeddevices.0.Plugs.Innen.HWR.Waschmaschine.ENERGY_Power', energyPower:'linkeddevices.0.Plugs.Innen.HWR.Waschmaschine.POWER'},
   {geraeteName:"Geschirrspüler", geraeteTyp: "diwa", autoOff: false, energyMessure: 'linkeddevices.0.Plugs.Innen.Kueche.Geschirrspueler.ENERGY_Power', energyPower:'linkeddevices.0.Plugs.Innen.Kueche.Geschirrspueler.POWER'},
   {geraeteName:"Computer", geraeteTyp: "computer", autoOff: false, energyMessure: 'linkeddevices.0.Plugs.Innen.Buero.PC.ENERGY_Power', energyPower:'linkeddevices.0.Plugs.Innen.Buero.PC.POWER'},
-  //{geraeteName:"Wasserkocher", geraeteTyp: "wako", autoOff: false, energyMessure: '', energyPower:''},
-  //{geraeteName:"Test", geraeteTyp: "test", autoOff: true, energyMessure: "0_userdata.0.Verbrauch.Test.testWert", energyPower: "0_userdata.0.Verbrauch.Test.ON/OFF"},
+  // {geraeteName:"Test", geraeteTyp: "test", autoOff: false, energyMessure: "0_userdata.0.Verbrauch.Test.testWert", energyPower: "0_userdata.0.Verbrauch.Test.ON/OFF"},
 ]
 
 /****************************************************
@@ -105,11 +105,11 @@ class Geraet {
     this.geraeteName = obj.geraeteName ;
     this.energyMessure = obj.energyMessure;
     this.energyPower = obj.energyPower;
-      // script intern
-      this.pfadZustand = zustand;
-      this.pfadDebug = stateDebug;
-      this.pfadVerbrauchLive = verbrauchAktuell;
-      this.pfadZustandSchalter = zustandSchalter;
+    // script intern
+    this.pfadZustand = zustand;
+    this.pfadDebug = stateDebug;
+    this.pfadVerbrauchLive = verbrauchAktuell;
+    this.pfadZustandSchalter = zustandSchalter;
     // Strings
     this.geraeteTyp = obj.geraeteTyp;
     this.einheit = "Watt";
@@ -185,8 +185,10 @@ arrGeraeteInput.forEach(function (obj) {  // array mit objekten aus class erstel
   //falls vorhanden, aber Prg neu gestartet wird
   setState(zustand, "initialisiere Zustand", true);
   setState(stateDebug, 0.0, true);
-  setState(zustandSchalter, getState(obj.energyPower), true);
-  // Objekt bauen (obj, startVal, endVal, startCount, endCount)
+  if (obj.autoOff) { // nur falls autoOff true ist, state holen
+    setState(zustandSchalter, getState(obj.energyPower), true);
+  };
+  // Objekt bauen (obj, ... , startVal, endVal, startCount, endCount)
   console.debug(obj)
   switch (obj.geraeteTyp) {
     case 'wama':
@@ -198,7 +200,7 @@ arrGeraeteInput.forEach(function (obj) {  // array mit objekten aus class erstel
     arrGeraete.push(Trockner);
     break;
     case 'diwa':
-    const GS = new Geraet(obj, zustand, verbrauchAktuell, laufzeit, zustandSchalter, stateDebug, 20, 5, 3, 100);
+    const GS = new Geraet(obj, zustand, verbrauchAktuell, laufzeit, zustandSchalter, stateDebug, 20, 4, 2, 120);
     arrGeraete.push(GS);
     break;
     case 'computer':
@@ -206,11 +208,11 @@ arrGeraeteInput.forEach(function (obj) {  // array mit objekten aus class erstel
     arrGeraete.push(Computer);
     break;
     case 'wako':
-    const WaKo = new Geraet(obj, zustand, verbrauchAktuell, laufzeit, zustandSchalter, stateDebug, 10, 5, 2, 2);
+    const WaKo = new Geraet(obj, zustand, verbrauchAktuell, laufzeit, zustandSchalter, stateDebug, 20, 5, 2, 2);
     arrGeraete.push(WaKo);
     break;
     case 'test':
-    const Test = new Geraet(obj, zustand, verbrauchAktuell, laufzeit, zustandSchalter, stateDebug, 15, 10, 3, 3);
+    const Test = new Geraet(obj, zustand, verbrauchAktuell, laufzeit, zustandSchalter, stateDebug, 50, 10, 3, 3);
     arrGeraete.push(Test);
     break;
     default:
@@ -247,7 +249,7 @@ arrGeraete.forEach(function(obj, index, arr){
         i.gestartet = false; // Vorgang gestartet
         setState(i.pfadZustand, "Standby" , true); // Status in DP schreiben
       };
-    } else if (i.arrStart.length != 0 && i.gestartet == false) {
+    } else if (wertNeu < (i.startCount/2) && i.arrStart.length != 0 && i.gestartet == false) { // Wert mind > i.startCount/2 & arrStart nicht leer und nicht gestartet, sonst "Abbruch"
       i.arrStart = []; // array wieder leeren
       console.debug("Startphase abgebrochen, array Start wieder geloescht");
       setState(i.pfadZustand, "ausgeschaltet" , true); // Status in DP schreiben
@@ -267,14 +269,13 @@ arrGeraete.forEach(function(obj, index, arr){
       } else {
         setState(i.pfadZustand, "Standy" , true); // Status in DP schreiben
       };
-
       i.endZeit = Date.now(); // ende Zeit loggen
       i.arrStart = []; // array wieder leeren
       i.arrAbbruch = []; // array wieder leeren
       if (i.endenachricht && !i.endenachrichtVersendet && i.startnachrichtVersendet ) {  // Ende Benachrichtigung aktiv?
         i.message = i.endenachrichtText; // Ende Benachrichtigung aktiv
         message(i);
-      }
+      };
       i.endenachrichtVersendet = true;
       i.startnachrichtVersendet = false;
     };
@@ -343,7 +344,7 @@ function time (i) {
 
 /****************************************************
 ************ Evaluation of the devices  *************
-*****************************************************/
+****************************************************/
 
 function dryer (i) {
 

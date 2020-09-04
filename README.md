@@ -1,4 +1,4 @@
-# js.device-reminder: Überwachungsscript für ioBroker (Version 0.2 Beta)
+# js.device-reminder: Überwachungsscript für ioBroker (Version 0.4.0 Beta)
 Dies ist ein beta-script zur Ermittlung und Auswertung von elektrischen Verbrauchen, die mittels Schalt-Mess-Aktoren in ioBroker überwacht werden. Bei Erreichen des Start oder Endzustandes kann man sich zusätzlich benachrichtigen lassen.
 
 # Was sollte beachtet werden?
@@ -26,7 +26,7 @@ Befehl in der Tasmota Konsole : TelePeriod 10
 # Anleitung
 - Ein neues JS Script in iobroker erstellen und das Script aus "script-device-reminder.js" kopieren und einfügen.
 
-- {geraeteName:"GERÄTENAME", geraeteTyp: "GERÄTETYP", autoOff: false, energyMessure: 'DP Messwert', energyPower:'DP Switch Schalter ON/OFF'},
+- {geraeteName:"GERÄTENAME", geraeteTyp: "GERÄTETYP", autoOff: false, energyMessure: 'DP Messwert', energyPower:'DP Switch Schalter ON/OFF'}, kopieren und in das Array "arrGeraeteInput" einfügen
 
 - 'GERAETENAME' kann durch einen beliebigen Namen ersetzt werden
 - 'GERÄTETYP' hier muss ein Gerätetyp aus der Liste unten ausgewählt werden

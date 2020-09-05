@@ -48,24 +48,36 @@ Befehl in der Tasmota Konsole : TelePeriod 10
 - Die Datenpunkte zur Anzeige in VIS werden automatisch standardmaessig unter "0_userdata.0.Verbrauch." angelegt.
 
 # Changelog
+
+#### 02.09.2020 (V 0.4.1)
+- (Steffen Feldkamp)
+  1. Fehler behoben, dass getObject einen log Fehler ausgibt, wenn autoOff = false
+  2. Erkennunsgenauigkeit der Geräte etwas verbessert
+  3. Fehler behoben, dass Geräte nicht immer ausgeschaltet werden
+
 #### 02.09.2020 (V 0.4)
-- (Steffen Feldkamp) automatisches Ausschalten von Aktoren nach Beendigung des Vorgangs implementiert
-- manual angepasst
+- (Steffen Feldkamp)
+  1. automatisches Ausschalten von Aktoren nach Beendigung des Vorgangs implementiert
+  2. manual angepasst
 
 #### 02.09.2020 (V 0.3)
 Version 0.3
-- (Steffen Feldkamp) Laufzeit eingefuegt
-- (Steffen Feldkamp) kleine Optimierungen eingefuegt bei if()-Abfragen
-- (Steffen Feldkamp) Whatsapp Benachrichtung eingefuegt
+- (Steffen Feldkamp)
+  1. Laufzeit eingefuegt
+  2. kleine Optimierungen eingefuegt bei if()-Abfragen
+  3. Whatsapp Benachrichtung eingefuegt
 
 #### 02.09.2020 (V 0.2)
-- (Steffen Feldkamp) -Fehler in der Berechnung, sowie kleinere Fehler behoben
+- (Steffen Feldkamp)
+  1. Fehler in der Berechnung, sowie kleinere Fehler behoben
 
 #### 01.09.2020 (V 0.1)
-- (Steffen Feldkamp) Bugfixes und änderung der Objekterstellung
+- (Steffen Feldkamp)
+  1. Bugfixes und änderung der Objekterstellung
 
 #### 01.09.2020 (V 0.0.1)
-- (Steffen Feldkamp) initial release
+- (Steffen Feldkamp)
+  1. initial release
 
 # License
 MIT License

@@ -44,6 +44,8 @@ Version 0.4.1
 **************** Benutzereingaben  ******************
 ****************************************************/
 
+// Für weitere Hinweise zum Anlegen eines Gerätes bitte die readme lesen !
+
 let standardPfad ="0_userdata.0.Verbrauch."; // kann angepasst werden, standardPfad ist 0_userdata.0.Verbrauch.
 let startNachricht = true; // Nachricht bei Geraetestart erhalten?
 let endeNachricht = true; // Nachricht bei Geraetevorgang ende erhalten?
@@ -56,10 +58,8 @@ let startText = "folgendes Geraet wurde gestartet: "; // Nachricht START
 let endText = "folgendes Geraet hat den Vorgang beendet: "; // Nachricht ENDE
 
 let arrGeraeteInput = [
-  //{geraeteName:"Trockner", geraeteTyp: "dryer", autoOff: false, energyMessure: 'linkeddevices.0.Plugs.Innen.HWR.Trockner.ENERGY_Power', energyPower:'linkeddevices.0.Plugs.Innen.HWR.Trockner.POWER'},
-  //{geraeteName:"Waschmaschine", geraeteTyp: "wama", autoOff: false, energyMessure: 'linkeddevices.0.Plugs.Innen.HWR.Waschmaschine.ENERGY_Power', energyPower:'linkeddevices.0.Plugs.Innen.HWR.Waschmaschine.POWER'},
-  //{geraeteName:"Geschirrspüler", geraeteTyp: "diwa", autoOff: false, energyMessure: 'linkeddevices.0.Plugs.Innen.Kueche.Geschirrspueler.ENERGY_Power', energyPower:'linkeddevices.0.Plugs.Innen.Kueche.Geschirrspueler.POWER'},
-  {geraeteName:"Test", geraeteTyp: "test", autoOff: true, energyMessure: "0_userdata.0.Verbrauch.Test.testWert", energyPower: "linkeddevices.0.Shelly.Innen.Licht.Schlafzimmer.Switch"},
+  {geraeteName:"Trockner", geraeteTyp: "dryer", autoOff: false, energyMessure: 'linkeddevices.0.Plugs.Innen.HWR.Trockner.ENERGY_Power', energyPower:'linkeddevices.0.Plugs.Innen.HWR.Trockner.POWER'},
+  //{geraeteName:"Test", geraeteTyp: "test", autoOff: true, energyMessure: "0_userdata.0.Verbrauch.Test.testWert", energyPower: "linkeddevices.0.Shelly.Innen.Licht.Schlafzimmer.Switch"},
 ]
 
 /****************************************************

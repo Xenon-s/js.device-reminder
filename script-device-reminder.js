@@ -1,5 +1,5 @@
 // Script zur Verbrauchsueberwachung von elektrischen Geraeten ueber ioBroker
-const version = "version 0.4.0 beta, 20.08.2020, letztes update 03.09.2020, 12:00 Uhr, S Feldkamp auf Stand 0.4.0";
+const version = "version 0.4.1 beta, 20.08.2020, letztes update 05.09.2020, 16:00 Uhr, S Feldkamp auf Stand 0.4.1";
 const erstellt = "s. feldkamp"
 
 /* Changelog
@@ -35,50 +35,31 @@ Version 0.4.0
 - automatisches Ausschalten von Aktoren nach Beendigung des Vorgangs implementiert
 - Berechnung für StartCalc angepasst
 
+Version 0.4.1
+- Fehler behoben, dass getObject einen log Fehler ausgibt, wenn autoOff = false
+- Erkennunsgenauigkeit der Geräte etwas verbessert
+- Fehler behoben, dass Geräte nicht immer ausgeschaltet werden
+
 *****************************************************
-********* Benutzereingaben und Anleitung ************
-*****************************************************
-
-Dieses Script dient dazu, eine variable Anzahl an Geraeten zu ueberwachen und bei eintreten eines Ereignisses eine Meldung auszugeben.
-In der Beta Phase muss man im array "Input" seine Geraete noch von Hand hinzufuegen, dass wird sich spaeter noch aendern. Dazu einfach die folgende Zeile kopieren
-und in arrGeraeteInput einfuegen.
-
-{geraeteName:"GERÄTENAME", geraeteTyp: "GERÄTETYP", autoOff: false, energyMessure: 'DP Messwert', energyPower:'DP Switch Schalter ON/OFF'},
-
-'GERAETENAME' kann durch einen beliebigen Namen ersetzt werden
-'GERÄTETYP' hier muss ein Gerätetyp aus der Liste unten ausgewählt werden
-'autoOff' hier kann für das jeweilige Gerät aktiviert werden, ob es nach Beendigung ausgeschaltet werden soll (ja= true / nein = false)
-'DATENPUNKT VERBRAUCH' Hier muss der DP ausgewaehlt werden, welcher den Verbrauch misst
-'DATENPUNKT SWITCH ON/OFF' Hier wird der Switch ausgewaehlt, der das Geraet AN/AUS schaltet
-
-Liste aktuell verfügbarer Gerätetypen (es muss das kürzel eingefügt werden, zb. wama):
-"Trockner" -> dryer
-"Waschmaschine" -> wama
-"Geschirrspueler" -> diwa
-"Computer" -> computer
-"Wasserkocher" -> wako
-"Test" -> test
-
-Die Datenpunkte zur Anzeige in VIS werden automatisch standardmaessig unter "0_userdata.0.Verbrauch." angelegt.
-*/
+**************** Benutzereingaben  ******************
+****************************************************/
 
 let standardPfad ="0_userdata.0.Verbrauch."; // kann angepasst werden, standardPfad ist 0_userdata.0.Verbrauch.
 let startNachricht = true; // Nachricht bei Geraetestart erhalten?
 let endeNachricht = true; // Nachricht bei Geraetevorgang ende erhalten?
-let telegram = true; // Nachricht per Telegram?
-let whatsapp = false; // Nachricht per WhatsApp?
-let arrTelegramUser =["Steffen", "", ""] // hier koennen die Empfaenger eingegeben werden. einfach den namen zwischen "USER1" einegeben und mit "," trennen
+let telegram = false; // Nachricht per Telegram?
+let arrTelegramUser =["", "", ""] // hier koennen die Empfaenger eingegeben werden. einfach den namen zwischen "" einegeben und mit "," trennen
 let alexa = false; // Nachricht per Alexa?
-let arrAlexaID = ["ID1", "ID2", "ID3"]; // ID von Alexa eingeben
+let arrAlexaID = ["ID1", "", ""]; // ID´s von Alexa eingeben -> nicht vergessen alexa eine Zeile höher auf true zu ändern!
+let whatsapp = false; // Nachricht per WhatsApp?
 let startText = "folgendes Geraet wurde gestartet: "; // Nachricht START
 let endText = "folgendes Geraet hat den Vorgang beendet: "; // Nachricht ENDE
 
 let arrGeraeteInput = [
-  {geraeteName:"Trockner", geraeteTyp: "dryer", autoOff: false, energyMessure: 'linkeddevices.0.Plugs.Innen.HWR.Trockner.ENERGY_Power', energyPower:'linkeddevices.0.Plugs.Innen.HWR.Trockner.POWER'},
-  {geraeteName:"Waschmaschine", geraeteTyp: "wama", autoOff: false, energyMessure: 'linkeddevices.0.Plugs.Innen.HWR.Waschmaschine.ENERGY_Power', energyPower:'linkeddevices.0.Plugs.Innen.HWR.Waschmaschine.POWER'},
-  {geraeteName:"Geschirrspüler", geraeteTyp: "diwa", autoOff: false, energyMessure: 'linkeddevices.0.Plugs.Innen.Kueche.Geschirrspueler.ENERGY_Power', energyPower:'linkeddevices.0.Plugs.Innen.Kueche.Geschirrspueler.POWER'},
-  {geraeteName:"Computer", geraeteTyp: "computer", autoOff: false, energyMessure: 'linkeddevices.0.Plugs.Innen.Buero.PC.ENERGY_Power', energyPower:'linkeddevices.0.Plugs.Innen.Buero.PC.POWER'},
-  // {geraeteName:"Test", geraeteTyp: "test", autoOff: false, energyMessure: "0_userdata.0.Verbrauch.Test.testWert", energyPower: "0_userdata.0.Verbrauch.Test.ON/OFF"},
+  //{geraeteName:"Trockner", geraeteTyp: "dryer", autoOff: false, energyMessure: 'linkeddevices.0.Plugs.Innen.HWR.Trockner.ENERGY_Power', energyPower:'linkeddevices.0.Plugs.Innen.HWR.Trockner.POWER'},
+  //{geraeteName:"Waschmaschine", geraeteTyp: "wama", autoOff: false, energyMessure: 'linkeddevices.0.Plugs.Innen.HWR.Waschmaschine.ENERGY_Power', energyPower:'linkeddevices.0.Plugs.Innen.HWR.Waschmaschine.POWER'},
+  //{geraeteName:"Geschirrspüler", geraeteTyp: "diwa", autoOff: false, energyMessure: 'linkeddevices.0.Plugs.Innen.Kueche.Geschirrspueler.ENERGY_Power', energyPower:'linkeddevices.0.Plugs.Innen.Kueche.Geschirrspueler.POWER'},
+  {geraeteName:"Test", geraeteTyp: "test", autoOff: true, energyMessure: "0_userdata.0.Verbrauch.Test.testWert", energyPower: "linkeddevices.0.Shelly.Innen.Licht.Schlafzimmer.Switch"},
 ]
 
 /****************************************************
@@ -192,23 +173,23 @@ arrGeraeteInput.forEach(function (obj) {  // array mit objekten aus class erstel
   console.debug(obj)
   switch (obj.geraeteTyp) {
     case 'wama':
-    const WaMa = new Geraet(obj, zustand, verbrauchAktuell, laufzeit, zustandSchalter, stateDebug, 30, 5, 3, 70);
+    const WaMa = new Geraet(obj, zustand, verbrauchAktuell, laufzeit, zustandSchalter, stateDebug, 15, 5, 3, 65);
     arrGeraete.push(WaMa);
     break;
     case 'dryer':
-    const Trockner = new Geraet(obj, zustand, verbrauchAktuell, laufzeit, zustandSchalter, stateDebug, 120, 10, 5, 50);
+    const Trockner = new Geraet(obj, zustand, verbrauchAktuell, laufzeit, zustandSchalter, stateDebug, 120, 10, 5, 60);
     arrGeraete.push(Trockner);
     break;
     case 'diwa':
-    const GS = new Geraet(obj, zustand, verbrauchAktuell, laufzeit, zustandSchalter, stateDebug, 20, 4, 2, 120);
+    const GS = new Geraet(obj, zustand, verbrauchAktuell, laufzeit, zustandSchalter, stateDebug, 15, 4, 2, 120);
     arrGeraete.push(GS);
     break;
     case 'computer':
-    const Computer = new Geraet(obj, zustand, verbrauchAktuell, laufzeit, zustandSchalter, stateDebug, 20, 5, 3, 10);
+    const Computer = new Geraet(obj, zustand, verbrauchAktuell, laufzeit, zustandSchalter, stateDebug, 15, 5, 3, 10);
     arrGeraete.push(Computer);
     break;
     case 'wako':
-    const WaKo = new Geraet(obj, zustand, verbrauchAktuell, laufzeit, zustandSchalter, stateDebug, 20, 5, 2, 2);
+    const WaKo = new Geraet(obj, zustand, verbrauchAktuell, laufzeit, zustandSchalter, stateDebug, 15, 5, 2, 2);
     arrGeraete.push(WaKo);
     break;
     case 'test':
@@ -221,6 +202,7 @@ arrGeraeteInput.forEach(function (obj) {  // array mit objekten aus class erstel
   }
 });
 
+console.log(arrGeraete);
 userTelegramIni (arrTelegramUser); //Telegramuser erstellen
 idAlexa (arrAlexaID);    // alexa IDs erstellen
 
@@ -232,6 +214,8 @@ arrGeraete.forEach(function(obj, index, arr){
     let wertNeu = obj.state.val;
     let wertAlt = obj.oldState.val;
     i.verbrauch = wertNeu;
+    console.log(i.energyPower);
+    //setState(i.energyPower, false);
     setState(i.pfadZustandSchalter, getState(i.energyPower),true);
     if (wertNeu > i.startValue && i.gestartet == false ) {
       i.startZeit = Date.now(); // Startzeit loggen
@@ -264,7 +248,7 @@ arrGeraete.forEach(function(obj, index, arr){
     } else if (i.resultEnd < i.endValue && i.resultEnd != null && i.gestartet && i.arrAbbruch.length >= (i.endCount / 2)) { // geraet muss mind. 1x ueber startValue gewesen sein, arrAbbruch muss voll sein und ergebis aus arrAbbruch unter endValue
       i.gestartet = false; // vorgang beendet
       if (i.autoOff && i.energyPower) {
-        setState(i.energyPower, false, true); // Geraet ausschalten, falls angewaehlt
+        setState(i.energyPower, false); // Geraet ausschalten, falls angewaehlt
         setState(i.pfadZustand, "ausgeschaltet" , true); // Status in DP schreiben
       } else {
         setState(i.pfadZustand, "Standy" , true); // Status in DP schreiben
@@ -283,11 +267,9 @@ arrGeraete.forEach(function(obj, index, arr){
   });
 });
 
-/*
-*****************************************************
+/****************************************************
 ************ functions and calculations  ************
-*****************************************************
-*/
+****************************************************/
 
 function calcStart (i, wertNeu) { // Calculate values ​​for operation "START"
   console.debug("Startwertberechnung wird fuer " + i.geraeteName + " ausgefuehrt")
@@ -372,7 +354,7 @@ function test (i) {
 
 /****************************************************
 *********** functions messenger services  ***********
-*****************************************************/
+****************************************************/
 
 function userTelegramIni (arrTelegramUser) { // "user telegram" ermitteln
   let arrTemp = [];

@@ -1,4 +1,4 @@
-# js.device-reminder: Überwachungsscript für ioBroker (Version 0.4.0 Beta)
+# js.device-reminder: Überwachungsscript für ioBroker (Version 0.4.2 Beta)
 Dies ist ein beta-script zur Ermittlung und Auswertung von beliebig vielen elektrischen Verbrauchen, die mittels Schalt-Mess-Aktoren in ioBroker überwacht werden. Bei Erreichen des Start oder Endzustandes kann man sich zusätzlich benachrichtigen lassen.
 
 # Was sollte beachtet werden?
@@ -49,35 +49,39 @@ Befehl in der Tasmota Konsole : TelePeriod 10
 
 # Changelog
 
+#### 06.09.2020 (V 0.4.2)
+- (Steffen Feldkamp)
+  - Fehler, dass zu viele Log Meldungen angezeigt werden, behoben
+
 #### 02.09.2020 (V 0.4.1)
 - (Steffen Feldkamp)
-  1. Fehler behoben, dass getObject einen log Fehler ausgibt, wenn autoOff = false
-  2. Erkennunsgenauigkeit der Geräte etwas verbessert
-  3. Fehler behoben, dass Geräte nicht immer ausgeschaltet werden
+  - Fehler behoben, dass getObject einen log Fehler ausgibt, wenn autoOff = false
+  - Erkennunsgenauigkeit der Geräte etwas verbessert
+  - Fehler behoben, dass Geräte nicht immer ausgeschaltet werden
 
 #### 02.09.2020 (V 0.4)
 - (Steffen Feldkamp)
-  1. automatisches Ausschalten von Aktoren nach Beendigung des Vorgangs implementiert
-  2. manual angepasst
+  - automatisches Ausschalten von Aktoren nach Beendigung des Vorgangs implementiert
+  - manual angepasst
 
 #### 02.09.2020 (V 0.3)
 Version 0.3
 - (Steffen Feldkamp)
-  1. Laufzeit eingefuegt
-  2. kleine Optimierungen eingefuegt bei if()-Abfragen
-  3. Whatsapp Benachrichtung eingefuegt
+  - Laufzeit eingefuegt
+  - kleine Optimierungen eingefuegt bei if()-Abfragen
+  - Whatsapp Benachrichtung eingefuegt
 
 #### 02.09.2020 (V 0.2)
 - (Steffen Feldkamp)
-  1. Fehler in der Berechnung, sowie kleinere Fehler behoben
+  - Fehler in der Berechnung, sowie kleinere Fehler behoben
 
 #### 01.09.2020 (V 0.1)
 - (Steffen Feldkamp)
-  1. Bugfixes und änderung der Objekterstellung
+  - Bugfixes und änderung der Objekterstellung
 
 #### 01.09.2020 (V 0.0.1)
 - (Steffen Feldkamp)
-  1. initial release
+  - initial release
 
 # License
 MIT License

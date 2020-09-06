@@ -1,5 +1,5 @@
 // Script zur Verbrauchsueberwachung von elektrischen Geraeten ueber ioBroker
-const version = "version 0.4.1 beta, 20.08.2020, letztes update 05.09.2020, 16:00 Uhr, S Feldkamp auf Stand 0.4.1";
+const version = "version 0.4.2 beta, 20.08.2020, letztes update 06.09.2020, 16:30 Uhr, S Feldkamp auf Stand 0.4.2";
 const erstellt = "s. feldkamp"
 
 /* Changelog
@@ -39,6 +39,9 @@ Version 0.4.1
 - Fehler behoben, dass getObject einen log Fehler ausgibt, wenn autoOff = false
 - Erkennunsgenauigkeit der Geräte etwas verbessert
 - Fehler behoben, dass Geräte nicht immer ausgeschaltet werden
+
+Version 0.4.2
+- Fehler, dass zu viele Log Meldungen angezeigt werden, behoben
 
 *****************************************************
 **************** Benutzereingaben  ******************
@@ -202,7 +205,7 @@ arrGeraeteInput.forEach(function (obj) {  // array mit objekten aus class erstel
   }
 });
 
-console.log(arrGeraete);
+console.debug(arrGeraete);
 userTelegramIni (arrTelegramUser); //Telegramuser erstellen
 idAlexa (arrAlexaID);    // alexa IDs erstellen
 
@@ -214,7 +217,7 @@ arrGeraete.forEach(function(obj, index, arr){
     let wertNeu = obj.state.val;
     let wertAlt = obj.oldState.val;
     i.verbrauch = wertNeu;
-    console.log(i.energyPower);
+    console.debug(i.energyPower);
     //setState(i.energyPower, false);
     setState(i.pfadZustandSchalter, getState(i.energyPower),true);
     if (wertNeu > i.startValue && i.gestartet == false ) {

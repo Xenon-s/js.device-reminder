@@ -1,5 +1,5 @@
 // Script zur Verbrauchsueberwachung von elektrischen Geraeten ueber ioBroker
-const version = "version 0.4.2 beta, 20.08.2020, letztes update 06.09.2020, 16:30 Uhr, S Feldkamp auf Stand 0.4.2";
+const version = "version 1.0, 20.08.2020, letztes update 09.09.2020, 11:30 Uhr, S Feldkamp auf Stand 1.0";
 const erstellt = "s. feldkamp"
 
 /* Changelog
@@ -42,6 +42,9 @@ Version 0.4.1
 
 Version 0.4.2
 - Fehler, dass zu viele Log Meldungen angezeigt werden, behoben
+
+Version 1.0
+- beta phase beendet
 
 *****************************************************
 **************** Benutzereingaben  ******************
@@ -325,34 +328,6 @@ function time (i) {
   diff = (vergleichsZeit - startZeit);
   time = formatDate(Math.round(diff),"hh:mm:ss");
   setState(i.gesamtZeit, time , true); // Status in DP schreiben
-};
-
-/****************************************************
-************ Evaluation of the devices  *************
-****************************************************/
-
-function dryer (i) {
-
-};
-
-function wama (i) {
-
-};
-
-function diwa (i) {
-
-};
-
-function computer (i) {
-
-};
-
-function wako (i) {
-
-};
-
-function test (i) {
-
 };
 
 /****************************************************

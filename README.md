@@ -1,4 +1,4 @@
-# js.device-reminder: Überwachungsscript für ioBroker (Version 0.4.2 Beta)
+# js.device-reminder: Überwachungsscript für ioBroker (Version 1.0)
 Dies ist ein beta-script zur Ermittlung und Auswertung von beliebig vielen elektrischen Verbrauchen, die mittels Schalt-Mess-Aktoren in ioBroker überwacht werden. Bei Erreichen des Start oder Endzustandes kann man sich zusätzlich benachrichtigen lassen.
 
 # Was sollte beachtet werden?
@@ -49,6 +49,10 @@ Befehl in der Tasmota Konsole : TelePeriod 10
 
 # Changelog
 
+#### 09.09.2020 (V 1.0)
+- (Steffen Feldkamp)
+  - Version stable
+
 #### 06.09.2020 (V 0.4.2)
 - (Steffen Feldkamp)
   - Fehler, dass zu viele Log Meldungen angezeigt werden, behoben
@@ -65,7 +69,6 @@ Befehl in der Tasmota Konsole : TelePeriod 10
   - manual angepasst
 
 #### 02.09.2020 (V 0.3)
-Version 0.3
 - (Steffen Feldkamp)
   - Laufzeit eingefuegt
   - kleine Optimierungen eingefuegt bei if()-Abfragen

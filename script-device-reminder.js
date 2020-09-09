@@ -1,76 +1,35 @@
 // Script zur Verbrauchsueberwachung von elektrischen Geraeten ueber ioBroker
-const version = "version 1.0, 20.08.2020, letztes update 09.09.2020, 11:30 Uhr, S Feldkamp auf Stand 1.0";
+const version = "version 1.0.1, 20.08.2020, letztes update 09.09.2020, 12:30 Uhr, S Feldkamp auf Stand 1.0.1";
 const erstellt = "s. feldkamp"
 
-/* Changelog
-Version 0.0.1
--Script erstellt
-
-Version 0.1
--erste Tests und buxfixes
--alexa und telegram hinzugefuegt
--bugfixes
--berechnung fuer Geraete eingefuegt und timeout entfernt
--unterschiedliche Telegramnutzer sind nun moeglich
--mehrere Alexa IDs sind nun moeglich
--objekterstellung ueberarbeitet und feste Werte hinzugefuegt
--Berechnung wurde nochmals ueberarbeitet
--Berechnung fuer den Startwert eingefuegt
--Auswertung und objekterstellung ueberarbeitet
-
-Version 0.2
--Fehler in der Berechnung behoben
--kleinere Fehler behoben
-
-Version 0.3
-- Laufzeit eingefuegt
-- kleine Optimierungen eingefuegt bei if()-Abfragen
-
-Version 0.3.1
-- Whatsapp Benachrichtung eingefuegt
-- objekterstellung angepasst, states werden nun vorher auf Vorhandensein geprueft
-- logmeldungen eingefuegt, wenn states fehlen und erstellt werden
-
-Version 0.4.0
-- automatisches Ausschalten von Aktoren nach Beendigung des Vorgangs implementiert
-- Berechnung für StartCalc angepasst
-
-Version 0.4.1
-- Fehler behoben, dass getObject einen log Fehler ausgibt, wenn autoOff = false
-- Erkennunsgenauigkeit der Geräte etwas verbessert
-- Fehler behoben, dass Geräte nicht immer ausgeschaltet werden
-
-Version 0.4.2
-- Fehler, dass zu viele Log Meldungen angezeigt werden, behoben
-
-Version 1.0
-- beta phase beendet
-
-*****************************************************
+/****************************************************
 **************** Benutzereingaben  ******************
 ****************************************************/
 
-// Für weitere Hinweise zum Anlegen eines Gerätes bitte die readme lesen !
-
 let standardPfad ="0_userdata.0.Verbrauch."; // kann angepasst werden, standardPfad ist 0_userdata.0.Verbrauch.
-let startNachricht = true; // Nachricht bei Geraetestart erhalten?
+let startNachricht = false; // Nachricht bei Geraetestart erhalten?
 let endeNachricht = true; // Nachricht bei Geraetevorgang ende erhalten?
 let telegram = false; // Nachricht per Telegram?
 let arrTelegramUser =["", "", ""] // hier koennen die Empfaenger eingegeben werden. einfach den namen zwischen "" einegeben und mit "," trennen
 let alexa = false; // Nachricht per Alexa?
-let arrAlexaID = ["ID1", "", ""]; // ID´s von Alexa eingeben -> nicht vergessen alexa eine Zeile höher auf true zu ändern!
+let arrAlexaID = ["", "", ""]; // ID´s von Alexa eingeben -> nicht vergessen alexa eine Zeile höher auf true zu ändern!
 let whatsapp = false; // Nachricht per WhatsApp?
 let startText = "folgendes Geraet wurde gestartet: "; // Nachricht START
 let endText = "folgendes Geraet hat den Vorgang beendet: "; // Nachricht ENDE
 
 let arrGeraeteInput = [
-  {geraeteName:"Trockner", geraeteTyp: "dryer", autoOff: false, energyMessure: 'linkeddevices.0.Plugs.Innen.HWR.Trockner.ENERGY_Power', energyPower:'linkeddevices.0.Plugs.Innen.HWR.Trockner.POWER'},
-  //{geraeteName:"Test", geraeteTyp: "test", autoOff: true, energyMessure: "0_userdata.0.Verbrauch.Test.testWert", energyPower: "linkeddevices.0.Shelly.Innen.Licht.Schlafzimmer.Switch"},
-]
+    {geraeteName:"Trockner", geraeteTyp: "dryer", autoOff: true, energyMessure: 'linkeddevices.0.Plugs.Innen.HWR.Trockner.ENERGY_Power', energyPower:'linkeddevices.0.Plugs.Innen.HWR.Trockner.POWER'},
+    {geraeteName:"Waschmaschine", geraeteTyp: "wama", autoOff: true, energyMessure: 'linkeddevices.0.Plugs.Innen.HWR.Waschmaschine.ENERGY_Power', energyPower:'linkeddevices.0.Plugs.Innen.HWR.Waschmaschine.POWER'},
+    {geraeteName:"Geschirrspüler", geraeteTyp: "diwa", autoOff: false, energyMessure: 'linkeddevices.0.Plugs.Innen.Kueche.Geschirrspueler.ENERGY_Power', energyPower:'linkeddevices.0.Plugs.Innen.Kueche.Geschirrspueler.POWER'},
+    {geraeteName:"Computer", geraeteTyp: "computer", autoOff: true, energyMessure: 'linkeddevices.0.Plugs.Innen.Buero.PC.ENERGY_Power', energyPower:'linkeddevices.0.Plugs.Innen.Buero.PC.POWER'},
+  ]
 
 /****************************************************
 *** ab hier darf nichts mehr geaendert werden !!! ***
 ****************************************************/
+
+// Script Start
+console.log("Script device-reminder gestartet " + version)
 
 // var erzeuegen
 let userTelegram = "";
@@ -80,12 +39,9 @@ let entwickler = false;
 let arrGeraete = [];
 let arrUsedAlexaIDs = [];
 
-console.debug(version);
-console.debug(erstellt);
-
 //Klasse erstellen
 class Geraet {
-  constructor(obj, zustand, verbrauchAktuell, laufzeit, zustandSchalter, stateDebug, startValue, endValue, startCount, endCount){
+  constructor(obj, zustand, verbrauchAktuell, laufzeit, zustandSchalter, startValue, endValue, startCount, endCount){
     // Attribute
     // Vorgaben
     // DPs
@@ -94,7 +50,6 @@ class Geraet {
     this.energyPower = obj.energyPower;
     // script intern
     this.pfadZustand = zustand;
-    this.pfadDebug = stateDebug;
     this.pfadVerbrauchLive = verbrauchAktuell;
     this.pfadZustandSchalter = zustandSchalter;
     // Strings
@@ -141,7 +96,6 @@ arrGeraeteInput.forEach(function (obj) {  // array mit objekten aus class erstel
   //DPs erstellen
   let zustand = (standardPfad + obj.geraeteName + ".Zustand");
   let verbrauchAktuell = (standardPfad + obj.geraeteName + ".Verbrauch aktuell");
-  let stateDebug = (standardPfad + obj.geraeteName + ".stateDebug");
   let laufzeit = (standardPfad + obj.geraeteName + ".Laufzeit");
   let zustandSchalter = (standardPfad + obj.geraeteName + ".Zustand Schalter");
   if(!getObject(zustand)) {
@@ -153,11 +107,6 @@ arrGeraeteInput.forEach(function (obj) {  // array mit objekten aus class erstel
     createState(verbrauchAktuell, 0.0, JSON.parse('{"type":"string"}'), function () {
     });
     console.log(verbrauchAktuell + " wurde angelegt");
-  };
-  if(!getObject(stateDebug)) {
-    createState(stateDebug, 0.0, JSON.parse('{"type":"number"}'), function () {
-    });
-    console.log(stateDebug + " wurde angelegt");
   };
   if(!getObject(laufzeit)) {
     createState(laufzeit, "00:00:00" , JSON.parse('{"type":"string"}'), function () {
@@ -171,7 +120,6 @@ arrGeraeteInput.forEach(function (obj) {  // array mit objekten aus class erstel
   };
   //falls vorhanden, aber Prg neu gestartet wird
   setState(zustand, "initialisiere Zustand", true);
-  setState(stateDebug, 0.0, true);
   if (obj.autoOff) { // nur falls autoOff true ist, state holen
     setState(zustandSchalter, getState(obj.energyPower), true);
   };
@@ -179,27 +127,27 @@ arrGeraeteInput.forEach(function (obj) {  // array mit objekten aus class erstel
   console.debug(obj)
   switch (obj.geraeteTyp) {
     case 'wama':
-    const WaMa = new Geraet(obj, zustand, verbrauchAktuell, laufzeit, zustandSchalter, stateDebug, 15, 5, 3, 65);
+    const WaMa = new Geraet(obj, zustand, verbrauchAktuell, laufzeit, zustandSchalter, 15, 5, 3, 65);
     arrGeraete.push(WaMa);
     break;
     case 'dryer':
-    const Trockner = new Geraet(obj, zustand, verbrauchAktuell, laufzeit, zustandSchalter, stateDebug, 120, 10, 5, 60);
+    const Trockner = new Geraet(obj, zustand, verbrauchAktuell, laufzeit, zustandSchalter, 120, 10, 5, 60);
     arrGeraete.push(Trockner);
     break;
     case 'diwa':
-    const GS = new Geraet(obj, zustand, verbrauchAktuell, laufzeit, zustandSchalter, stateDebug, 15, 4, 2, 120);
+    const GS = new Geraet(obj, zustand, verbrauchAktuell, laufzeit, zustandSchalter, 15, 4, 2, 120);
     arrGeraete.push(GS);
     break;
     case 'computer':
-    const Computer = new Geraet(obj, zustand, verbrauchAktuell, laufzeit, zustandSchalter, stateDebug, 15, 5, 3, 10);
+    const Computer = new Geraet(obj, zustand, verbrauchAktuell, laufzeit, zustandSchalter, 15, 5, 3, 10);
     arrGeraete.push(Computer);
     break;
     case 'wako':
-    const WaKo = new Geraet(obj, zustand, verbrauchAktuell, laufzeit, zustandSchalter, stateDebug, 15, 5, 2, 2);
+    const WaKo = new Geraet(obj, zustand, verbrauchAktuell, laufzeit, zustandSchalter, 15, 5, 2, 2);
     arrGeraete.push(WaKo);
     break;
     case 'test':
-    const Test = new Geraet(obj, zustand, verbrauchAktuell, laufzeit, zustandSchalter, stateDebug, 50, 10, 3, 3);
+    const Test = new Geraet(obj, zustand, verbrauchAktuell, laufzeit, zustandSchalter, 50, 10, 3, 3);
     arrGeraete.push(Test);
     break;
     default:

@@ -49,6 +49,10 @@ Befehl in der Tasmota Konsole : TelePeriod 10
 
 # Changelog
 
+#### 09.09.2020 (V 1.0.1)
+- (Steffen Feldkamp)
+  - debug Einträge entfernt
+
 #### 09.09.2020 (V 1.0)
 - (Steffen Feldkamp)
   - Version stable

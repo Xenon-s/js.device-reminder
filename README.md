@@ -1,4 +1,4 @@
-# js.device-reminder: Überwachungsscript für ioBroker (Version 1.0)
+# js.device-reminder: Überwachungsscript für ioBroker (Version 1.0.1)
 Dies ist ein Script zur Ermittlung und Auswertung von beliebig vielen elektrischen Verbrauchen, die mittels Schalt-Mess-Aktoren in ioBroker überwacht werden. Bei Erreichen des Start oder Endzustandes kann man sich zusätzlich benachrichtigen lassen.
 
 # Was sollte beachtet werden?

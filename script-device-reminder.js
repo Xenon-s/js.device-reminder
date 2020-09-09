@@ -239,7 +239,6 @@ function calcStart (i, wertNeu) { // Calculate values ​​for operation "START
   // Ergebnis an obj uebergeben
   i.resultStart = Math.round((ergebnisTemp / parseFloat(i.arrStart.length)*10)/10);
   debug = i.resultStart;
-  setState(i.pfadDebug, debug, true); // DEBUG!!
   console.debug("Array Start: " + i.arrStart)
   console.debug("Ergebnis " + i.geraeteName + ": " + i.resultStart + " " + i.einheit)
 };
@@ -258,7 +257,6 @@ function calcEnd (i, wertNeu) { // Calculate values ​​for operation "END"
   // Ergebnis an obj uebergeben
   i.resultEnd = Math.round((ergebnisTemp / parseFloat(i.arrAbbruch.length)*10)/10);
   debug = i.resultEnd;
-  setState(i.pfadDebug, debug, true); // DEBUG!!
   console.debug("Array Ende Laenge: " + i.arrAbbruch.length + ", endCounter: " + i.endCount)
   console.debug("Array Ende " + i.arrAbbruch)
   console.debug("Ergebnis " + i.geraeteName + ": " + i.resultEnd + " " + i.einheit)

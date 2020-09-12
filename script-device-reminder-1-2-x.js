@@ -36,7 +36,7 @@ const arrGeraeteInput = [
 ];
 
 
-/* Bei updates muss erst ab hier kopiert und einegfügt werden, somit braucht man seine Geräteliste nicht jedes mal neu erstellen*/
+/* Bei updates muss erst ab hier kopiert und eingefügt werden, somit braucht man seine Geräteliste nicht jedes mal neu erstellen*/
 
 // array erzeugen
 const arrGeraete = [];
@@ -140,7 +140,7 @@ arrGeraeteInput.forEach(function (obj) {  // array mit objekten aus class erstel
     if (!getState(obj.switchPower).val) {
         setState(zustand, "ausgeschaltet", true);
     } else {
-        setState(zustand, "initialisiere Zustand", true);
+        setState(zustand, "standby", true);
     };
 
     // Objekt bauen (obj, ... , startVal, endVal, startCount, endCount)

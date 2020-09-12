@@ -1,9 +1,10 @@
-# js.device-reminder: Überwachungsscript für ioBroker (Version 1.0.1)
+# js.device-reminder: Überwachungsscript für ioBroker (Version 1.2)
 Dies ist ein Script zur Ermittlung und Auswertung von beliebig vielen elektrischen Verbrauchen, die mittels Schalt-Mess-Aktoren in ioBroker überwacht werden. Bei Erreichen des Start oder Endzustandes kann man sich zusätzlich benachrichtigen lassen.
 
 # Was sollte beachtet werden?
 Der refresh Intervall vom "Verbrauchswert(heißt bei den meisten Geräten "energy")" sollte nicht mehr als 10 Sekunden betragen, da es sonst zu sehr stark verzögerten Meldungen kommen kann.
 Befehl in der Tasmota Konsole : TelePeriod 10
+**Wichtig** Bevor das Script geladen wird, unter **0_userdata.0.Verbrauch.** schauen, ob der Ordner "Verbrauch" bereits vorhanden ist. Wenn ja, diesen unbedingt löschen und danach das Script starten! Dies muss nur dann gemacht werden, wenn man ein Update von einer Version kleiner 1.2.0 macht.
 
 # Welche Geräte können zur Zeit überwacht werden?
 - Waschmaschine,
@@ -15,27 +16,41 @@ Befehl in der Tasmota Konsole : TelePeriod 10
 
 - weitere werden folgen ...
 
-# Was ist möglich?
+# Was ist pro Gerät möglich?
 - Benachrichtigung beim Gerätestart
-- Benachrichtigung beim Vorgangsende des jeweiligen Gerätestart
-- Telegram-Benachrichtigung (mehrere IDs sind möglich)
-- Alexa-Benachrichtigung (mehrere IDs sind möglich)
-- WhatsApp-Benachrichtung
+- Benachrichtigung beim Vorgangsende des jeweiligen Gerätestart 
+- Telegram-Benachrichtigung (mehrere IDs sind möglich) 
+- Alexa-Benachrichtigung (mehrere IDs sind möglich) 
+- WhatsApp-Benachrichtung 
 - Geräte bei Bedarf abschalten, wenn Vorgang beendet erkannt wurde
 
 # Anleitung
 ## Script erstellen und Benutzereingaben anpassen
 1. Ein neues JS Script in iobroker erstellen und das Script aus "script-device-reminder.js" kopieren und einfügen.
-2. Benutzerkonfiguration anpassen (Benachrichtigungen aktivieren, etc.)
+  ![erstellung1.jpg](/admin/erstellung1.jpg)
+  ![erstellung2jpg](/admin/erstellung2.jpg)
 
 ### Eigenes Gerät hinzufügen
-3. Die gewünschten Geräte hinzufügen wie im folgenden beschrieben:
-  - **{geraeteName:"GERÄTENAME", geraeteTyp: "GERÄTETYP", autoOff: false, energyMessure: 'DP Messwert', energyPower:'DP Switch Schalter ON/OFF'},** kopieren und in das Array "arrGeraeteInput" einfügen
-  - **'GERAETENAME'** kann durch einen beliebigen Namen ersetzt werden
-  - **'GERÄTETYP'**' hier muss ein Gerätetyp aus der Liste unten ausgewählt werden
-  - **'autoOff'**' hier kann für das jeweilige Gerät aktiviert werden, ob es nach Beendigung ausgeschaltet werden soll (ja= true / nein = false)
-  - **'DATENPUNKT VERBRAUCH'**' Hier muss der DP ausgewaehlt werden, welcher den Verbrauch misst
-  - **'DATENPUNKT SWITCH ON/OFF'**' Hier wird der Switch ausgewaehlt, der das Geraet AN/AUS schaltet
+2. Die gewünschten Geräte hinzufügen wie im folgenden beschrieben:
+  ![erstellung3jpg](/admin/erstellung3.jpg)
+  - **'Gerät anlegen'** alles zwischen **/*von hier*/** bis **/*bis hier kopieren*/** kopieren und erneut einfügen. Dies muss für jedes Gerät durchgeführt werden.
+  - **'geraeteName'** kann durch einen beliebigen Namen ersetzt werden
+  - **'geraeteTyp'** hier muss ein Gerätetyp aus der Liste unten ausgewählt werden Beendigung ausgeschaltet werden soll (ja= true / nein = false)
+  - **'currentConsumption'** Hier muss der DP ausgewaehlt werden, welcher den Verbrauch misst
+  - **'switchPower'** Hier wird der Switch ausgewaehlt, der das Geraet AN/AUS schaltet
+  - **'autoOff'** hier kann für das jeweilige Gerät aktiviert werden, ob es nach 
+  - **'startActive'** true = Nachricht bei Gerätestart aktiv, false = inaktiv
+  - **'startMessage'** individuelle Startnachricht für das Gerät festlegen
+  - **'endActive'** true = Nachricht bei Geräteende aktiv, false = inaktiv
+  - **'endMessage'** individuelle Endnachricht für das Gerät festlegen
+  - **'telegram'** true = telegram aktiv, false = inaktiv
+  - **'telegramUser'** ["Name","Name 2"] **Wichtig:** nur existierende Namen verwenden!
+  - **'alexa'** true = alexa aktiv, false = inaktiv
+  - **'alexaID'** ["DF56GFDDS15FD15G", "DF56GFDD5DS4F565G"] **Wichtig:** nur existierende IDs verwenden!
+    ![erstellung4jpg](/admin/erstellung4.jpg)
+  - **'whatsapp'** true = whatsapp aktiv, false = inaktiv
+  - **'whatsappID'** ["+4901234567890", "+490123626490"] **Wichtig:** nur existierende Nummern verwenden!
+
 
 - Liste aktuell verfügbarer Gerätetypen (es muss das kürzel eingefügt werden, zb. wama):
 1. **Trockner** -> dryer
@@ -45,9 +60,26 @@ Befehl in der Tasmota Konsole : TelePeriod 10
 5. **Wasserkocher** -> wako
 6. **Test**' -> test
 
+# eigenes Gerät erstellen
+Möchte man sich selber ein Gerät konfigurieren, bitte hier weiterlesen:
+  - Gerätetyp "test" nutzen :
+  ![eigenesObjekt.jpg](/admin/eigenesObjekt.jpg)
+  - entscheidend sind hier die 4 Zahlen in dem roten Kasten.
+  1. Schwelle **Startwert**, der überschritten werden muss um **"Gerät gestartet"** zu erkennen
+  2. Schwelle **Endwert**, der unterschritten werden muss um **"Gerät fertig"** zu erkennen
+  3. Anzahl Werte die aufgezeichnet werden, bevor **"Gerät gestartet"** ermittelt wird. Dies dient, um Spitzen oder Schwankungen bei den Werten abzufangen und beugt Falschmeldungen vor.
+  4. Anzahl Werte die aufgezeichnet werden, bevor **"Gerät fertig"** ermittelt wird. Bei Geräten die große Schwankungen im Verbrauch haben, sollte dieser Wert nicht zu gering gewählt werden!
+
+# Datenpunkte für weitere Verwendungen
 - Die Datenpunkte zur Anzeige in VIS werden automatisch standardmaessig unter "0_userdata.0.Verbrauch." angelegt.
+  ![objekteVIS.jpg](/admin/objekteVIS.jpg)
+
 
 # Changelog
+#### 12.09.2020 (V 1.2.0)
+- (Steffen Feldkamp)
+  - jedes Gerät ist nun komplett frei konfigurierbar
+  - readme angepasst und erweitert
 
 #### 09.09.2020 (V 1.0.1)
 - (Steffen Feldkamp)

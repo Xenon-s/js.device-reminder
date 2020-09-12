@@ -1,5 +1,5 @@
 // Script zur Verbrauchsueberwachung von elektrischen Geraeten ueber ioBroker
-const version = "version 1.2.1, letztes update 12.09.2020, 15:00 Uhr, S Feldkamp auf Stand 1.2.1";
+const version = "version 1.2.1, letztes update 12.09.2020, 15:30 Uhr, S Feldkamp auf Stand 1.2.1";
 const erstellt = "s. feldkamp"
 
 /****************************************************
@@ -35,10 +35,8 @@ const arrGeraeteInput = [
     /*bis hier kopieren*/
 ];
 
-/*Bei zukünftigen Updates erst ab hier kopieren*/
 
-// var erzeuegen
-const entwickler = false;
+/* Bei updates muss erst ab hier kopiert und einegfügt werden, somit braucht man seine Geräteliste nicht jedes mal neu erstellen*/
 
 // array erzeugen
 const arrGeraete = [];
@@ -138,11 +136,13 @@ arrGeraeteInput.forEach(function (obj) {  // array mit objekten aus class erstel
         console.debug(zustandSchalter + " wurde angelegt");
     };
     //falls vorhanden, aber Prg neu gestartet wird
-    setState(zustand, "initialisiere Zustand", true);
-    if (obj.autoOff) { // nur falls autoOff true ist, state holen
-        console.debug("zustandSchalter: " + zustandSchalter);
-        setState(zustandSchalter, getState(obj.switchPower), true);
+    setState(zustandSchalter, getState(obj.switchPower).val, true);
+    if (!getState(obj.switchPower).val) {
+        setState(zustand, "ausgeschaltet", true);
+    } else {
+        setState(zustand, "initialisiere Zustand", true);
     };
+
     // Objekt bauen (obj, ... , startVal, endVal, startCount, endCount)
     console.debug(obj)
     switch (obj.geraeteTyp) {
@@ -194,7 +194,6 @@ arrGeraete.forEach(function (obj, index, arr) {
             calcStart(i, wertNeu); //Startwert berechnen und ueberpruefen
             if (i.resultStart > i.startValue && i.resultStart != null && i.arrStart.length >= i.startCount && i.gestartet == false) {
                 i.gestartet = true; // Vorgang gestartet
-                console.warn("Gestartet " + i.pfadZustand);
                 setState(i.pfadZustand, "gestartet", true); // Status in DP schreiben
                 if (i.startnachricht && !i.startnachrichtVersendet) { // Start Benachrichtigung aktiv?
                     i.message = i.startnachrichtText; // Start Benachrichtigung aktiv

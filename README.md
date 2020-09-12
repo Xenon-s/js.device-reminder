@@ -79,6 +79,10 @@ Möchte man sich selber ein Gerät konfigurieren, bitte hier weiterlesen:
 
 
 # Changelog
+#### 12.09.2020 (V 1.2.1)
+- (Steffen Feldkamp)
+  - bugfix bei Zustand der einzelnen Schalter
+
 #### 12.09.2020 (V 1.2.0)
 - (Steffen Feldkamp)
   - jedes Gerät ist nun komplett frei konfigurierbar

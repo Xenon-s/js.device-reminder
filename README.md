@@ -4,7 +4,7 @@ Dies ist ein Script zur Ermittlung und Auswertung von beliebig vielen elektrisch
 # Was sollte beachtet werden?
 Der refresh Intervall vom "Verbrauchswert(heißt bei den meisten Geräten "energy")" sollte nicht mehr als 10 Sekunden betragen, da es sonst zu sehr stark verzögerten Meldungen kommen kann.
 Befehl in der Tasmota Konsole : TelePeriod 10
-**Wichtig** Bevor das Script geladen wird, unter **0_userdata.0.Verbrauch.** schauen, ob der Ordner "Verbrauch" bereits vorhanden ist. Wenn ja, diesen unbedingt löschen und danach das Script starten! Dies muss nur dann gemacht werden, wenn man ein Update von einer Version kleiner 1.2.0 macht.
+**Wichtig** Bevor das Script geladen wird, unter **0_userdata.0.Verbrauch.** schauen, ob der Ordner "Verbrauch" bereits vorhanden ist. Wenn ja, diesen unbedingt löschen und danach das Script starten! Dies muss nur dann gemacht werden, wenn man ein Update von einer Version kleiner 1.2.X macht.
 
 # Welche Geräte können zur Zeit überwacht werden?
 - Waschmaschine,
@@ -26,7 +26,8 @@ Befehl in der Tasmota Konsole : TelePeriod 10
 
 # Anleitung
 ## Script erstellen und Benutzereingaben anpassen
-1. Ein neues JS Script in iobroker erstellen und das Script aus "script-device-reminder.js" kopieren und einfügen.
+1. Ein neues JS Script in iobroker erstellen und das Script aus "script-device-reminder-1-2-x.js" kopieren und einfügen.
+
   ![erstellung1.jpg](/admin/erstellung1.jpg)
   ![erstellung2jpg](/admin/erstellung2.jpg)
 
@@ -62,9 +63,11 @@ Befehl in der Tasmota Konsole : TelePeriod 10
 
 # eigenes Gerät erstellen
 Möchte man sich selber ein Gerät konfigurieren, bitte hier weiterlesen:
-  - Gerätetyp "test" nutzen :
+  Gerätetyp "test" nutzen :
+
   ![eigenesObjekt.jpg](/admin/eigenesObjekt.jpg)
-  - entscheidend sind hier die 4 Zahlen in dem roten Kasten.
+
+  - entscheidend sind hier die 4 Zahlen in dem roten Kasten:
   1. Schwelle **Startwert**, der überschritten werden muss um **"Gerät gestartet"** zu erkennen
   2. Schwelle **Endwert**, der unterschritten werden muss um **"Gerät fertig"** zu erkennen
   3. Anzahl Werte die aufgezeichnet werden, bevor **"Gerät gestartet"** ermittelt wird. Dies dient, um Spitzen oder Schwankungen bei den Werten abzufangen und beugt Falschmeldungen vor.

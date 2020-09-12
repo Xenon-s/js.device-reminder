@@ -39,7 +39,7 @@ Befehl in der Tasmota Konsole : TelePeriod 10 <br>
   - **'geraeteTyp'** hier muss ein Gerätetyp aus der Liste unten ausgewählt werden
   - **'currentConsumption'** Hier muss der DP ausgewaehlt werden, welcher den Verbrauch misst
   - **'switchPower'** Hier wird der Switch ausgewaehlt, der das Geraet AN/AUS schaltet
-  - **'autoOff'** hier kann für das jeweilige Gerät aktiviert werden, ob es nach 
+  - **'autoOff'** hier kann für das jeweilige Gerät aktiviert werden, ob es nach Beendigung ausgeschaltet werden soll
   - **'startActive'** true = Nachricht bei Gerätestart aktiv, false = inaktiv
   - **'startMessage'** individuelle Startnachricht für das Gerät festlegen
   - **'endActive'** true = Nachricht bei Geräteende aktiv, false = inaktiv

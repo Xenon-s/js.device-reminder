@@ -77,8 +77,8 @@ Möchte man sich selber ein Gerät konfigurieren, bitte hier weiterlesen: <br>
 - Die Datenpunkte zur Anzeige in VIS werden automatisch standardmaessig unter "0_userdata.0.Verbrauch." angelegt. <br>
   ![objekteVIS.jpg](/admin/objekteVIS.jpg) <br>
 
-  # Script-Updates einspielen
-  - Solltet ihr auf eine neue Version des Scriptes updaten wollen, so braucht ihr -wenn nicht anders angegeben- nur den Teil ab **/* Bei updates muss erst ab hier kopiert und eingefügt werden, somit braucht man seine Geräteliste nicht jedes mal neu erstellen*/** kopieren und neu einfügen. Somit muss nicht jedes Mal der komplette Gerätepart oben neu gemacht werden.
+# Script-Updates einspielen
+- Solltet ihr auf eine neue Version des Scriptes updaten wollen, so braucht ihr -wenn nicht anders angegeben- nur den Teil ab **/* Bei updates muss erst ab hier kopiert und eingefügt werden, somit braucht man seine Geräteliste nicht jedes mal neu erstellen*/** kopieren und neu einfügen. Somit muss nicht jedes Mal der komplette Gerätepart oben neu gemacht werden.
 
 
 # Changelog

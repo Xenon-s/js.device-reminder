@@ -1,5 +1,5 @@
 // Script zur Verbrauchsueberwachung von elektrischen Geraeten ueber ioBroker
-const version = "version 1.2.0, letztes update 12.09.2020, 12:30 Uhr, S Feldkamp auf Stand 1.2.0";
+const version = "version 1.2.1, letztes update 12.09.2020, 15:00 Uhr, S Feldkamp auf Stand 1.2.1";
 const erstellt = "s. feldkamp"
 
 /****************************************************
@@ -34,6 +34,8 @@ const arrGeraeteInput = [
     },
     /*bis hier kopieren*/
 ];
+
+/*Bei zukünftigen Updates erst ab hier kopieren*/
 
 // var erzeuegen
 const entwickler = false;
@@ -257,7 +259,6 @@ function calcStart(i, wertNeu) { // Calculate values ​​for operation "START"
     // Ergebnis an obj uebergeben
     i.resultStart = Math.round((ergebnisTemp / parseFloat(i.arrStart.length) * 10) / 10);
     debug = i.resultStart;
-    setState(i.pfadDebug, debug, true); // DEBUG!!
     console.debug("Array Start: " + i.arrStart)
     console.debug("Ergebnis START" + i.geraeteName + ": " + i.resultStart + " " + i.einheit)
 };
@@ -276,7 +277,6 @@ function calcEnd(i, wertNeu) { // Calculate values ​​for operation "END"
     // Ergebnis an obj uebergeben
     i.resultEnd = Math.round((ergebnisTemp / parseFloat(i.arrAbbruch.length) * 10) / 10);
     debug = i.resultEnd;
-    setState(i.pfadDebug, debug, true); // DEBUG!!
     console.debug("Array Ende Laenge: " + i.arrAbbruch.length + ", endCounter: " + i.endCount)
     console.debug("Array Ende " + i.arrAbbruch)
     console.debug("Ergebnis ENDE" + i.geraeteName + ": " + i.resultEnd + " " + i.einheit)

@@ -1,3 +1,8 @@
+**Falls euch meine Arbeit gefällt :** <br>
+
+[![paypal](https://www.paypalobjects.com/en_US/DK/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=3EYML5A4EMJCW&source=url) 
+
+
 # js.device-reminder: Überwachungsscript für ioBroker (Version 1.2.1)
 Dies ist ein Script zur Ermittlung und Auswertung von beliebig vielen elektrischen Verbrauchen, die mittels Schalt-Mess-Aktoren in ioBroker überwacht werden. Bei Erreichen des Start oder Endzustandes kann man sich zusätzlich benachrichtigen lassen.
 
